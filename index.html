@@ -939,30 +939,30 @@ AI는 **힌트와 리뷰**로만 돕는다.
                       { label: '선택', cls: 'bg-slate-200 text-slate-700' },
                     ];
                     return (
-                      <div key={idx} className="bg-white border border-line rounded-xl p-4 md:p-5">
-                        <div className="flex items-baseline gap-2 mb-3 pb-3 border-b border-line-soft">
-                          <span className="text-[11px] num font-mono text-ink-mute">M{idx+1}</span>
-                          <h4 className="font-bold text-base">{m.name}</h4>
-                          <span className="text-xs text-ink-mute">·</span>
-                          <p className="text-sm text-brand font-semibold">{m.domain}</p>
+                      <div key={idx} className="bg-white border border-line rounded-xl p-5 md:p-6">
+                        <div className="flex items-baseline gap-2.5 mb-4 pb-3 border-b border-line">
+                          <span className="text-xs num font-mono text-ink-mute font-semibold">M{idx+1}</span>
+                          <h4 className="font-bold text-lg">{m.name}</h4>
+                          <span className="text-sm text-ink-mute">·</span>
+                          <p className="text-base text-brand font-bold">{m.domain}</p>
                         </div>
-                        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-2">
+                        <div className="grid md:grid-cols-2 gap-3">
                           {stages.map((s, i) => (
-                            <div key={i} className={`rounded-lg p-3 border ${stageColors[i]} relative`}>
-                              <div className="flex items-center justify-between mb-2">
-                                <span className={`text-[11px] num font-mono font-bold px-1.5 py-0.5 rounded ${stageBadges[i]}`}>STAGE {i+1}</span>
-                                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${prTags[i].cls}`}>{prTags[i].label}</span>
+                            <div key={i} className={`rounded-xl p-4 border ${stageColors[i]} relative`}>
+                              <div className="flex items-center justify-between mb-3">
+                                <span className={`text-xs num font-mono font-bold px-2 py-1 rounded ${stageBadges[i]}`}>STAGE {i+1}</span>
+                                <span className={`text-xs font-bold px-2 py-1 rounded ${prTags[i].cls}`}>{prTags[i].label}</span>
                               </div>
-                              <p className="text-xs font-bold text-ink mb-1.5 leading-snug">{s.act}</p>
+                              <p className="text-sm font-bold text-ink mb-2 leading-snug">{s.act}</p>
                               {s.code && (
-                                <p className="text-[11px] font-mono bg-white/60 px-2 py-1 rounded text-ink-soft mb-1.5 leading-snug">{s.code}</p>
+                                <p className="text-xs font-mono bg-white px-2.5 py-1.5 rounded border border-white text-ink-soft mb-2 leading-relaxed">{s.code}</p>
                               )}
                               {s.pain && (
-                                <p className="text-[11px] text-ink-soft mb-2 leading-snug"><strong className="text-ink">통증:</strong> {s.pain}</p>
+                                <p className="text-xs text-ink-soft mb-2.5 leading-relaxed"><strong className="text-ink font-bold">통증:</strong> {s.pain}</p>
                               )}
-                              <div className="flex flex-wrap gap-1">
+                              <div className="flex flex-wrap gap-1.5">
                                 {s.concepts.map((c, k) => (
-                                  <span key={k} className="text-[10px] px-1.5 py-0.5 rounded bg-white border border-line text-ink-soft">{c}</span>
+                                  <span key={k} className="text-xs px-2 py-0.5 rounded-md bg-white border border-line text-ink-soft font-medium">{c}</span>
                                 ))}
                               </div>
                             </div>
