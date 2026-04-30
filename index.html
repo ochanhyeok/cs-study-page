@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CS 스터디 · 20주 백엔드 면접 정복</title>
+  <meta name="description" content="겪고, 배우고, 풀어낸다. 20주 7명 CS 스터디 가이드." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%233182f6'/%3E%3Ctext x='50' y='62' font-size='44' font-weight='700' text-anchor='middle' fill='white' font-family='system-ui'%3ECS%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Pretendard Variable','Pretendard','system-ui','-apple-system','sans-serif'] },
+          colors: {
+            ink: '#191f28', 'ink-soft': '#4e5968', 'ink-mute': '#8b95a1',
+            line: '#e5e8eb', 'line-soft': '#f2f4f6',
+            'bg-base': '#ffffff', 'bg-alt': '#f9fafb',
+            brand: '#3182f6', 'brand-hover': '#1b64da', 'brand-faint': '#e8f3ff',
+          },
+          maxWidth: { '5xl': '1024px' },
+        }
+      }
+    }
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Pretendard Variable', Pretendard, system-ui, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; letter-spacing: -0.011em; }
+    .num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+    .gradient-text { background: linear-gradient(135deg, #3182f6 0%, #1b64da 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  </style>
+</head>
+<body class="bg-bg-base text-ink">
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel" data-presets="env,react">
+    const I = {
+      Flame: ({ className = "w-5 h-5" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>,
+      BookOpen: ({ className = "w-5 h-5" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
+      Wrench: ({ className = "w-5 h-5" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>,
+      ArrowRight: ({ className = "w-5 h-5" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>,
+      Check: ({ className = "w-5 h-5" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
+      GitPullRequest: ({ className = "w-5 h-5" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><line x1="6" y1="9" x2="6" y2="21"/></svg>,
+      Target: ({ className = "w-5 h-5" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
+      MessageSquare: ({ className = "w-5 h-5" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
+      X: ({ className = "w-5 h-5" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>,
+      FileText: ({ className = "w-5 h-5" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>,
+      Users: ({ className = "w-5 h-5" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+    };
+
+    const App = () => {
+      const [scenarioOpen, setScenarioOpen] = React.useState(false);
+      const [claudeMdOpen, setClaudeMdOpen] = React.useState(false);
+      const [topicFlowOpen, setTopicFlowOpen] = React.useState(false);
+
+      const week1Members = [
+        {
+          name: '오찬혁', domain: '선착순 쿠폰',
+          s1: { act: '100개 쿠폰, 200명 동시 신청', code: 'if(coupons>0) coupons--', pain: '105개 초과 발급', concepts: ['race', 'check-then-act', 'Heap 공유'] },
+          s2: { act: '이벤트 마감 플래그 추가', pain: '관리자가 마감 눌러도 발급 계속', concepts: ['visibility', 'JMM', 'CPU 캐시'] },
+          s3: { act: '스레드 수 변화 측정', concepts: ['atomicity 분해', '컨텍스트 스위칭'] },
+          s4: { act: 'Spring + ab 부하 (선택)', concepts: ['Bean 싱글톤'] }
+        },
+        {
+          name: '김가빈', domain: '이중 환불',
+          s1: { act: '같은 결제에 환불 요청 2건', code: 'if(!refunded) refunded=true', pain: '환불 두 번 처리', concepts: ['race', 'idempotency', 'check-then-act'] },
+          s2: { act: '환불 처리 중 플래그', pain: '다른 스레드가 처리 중 모름', concepts: ['visibility', 'JMM'] },
+          s3: { act: '동시 요청 수 측정', concepts: ['atomicity 분해'] },
+          s4: { act: 'Spring 환불 API (선택)', concepts: ['Bean 안전성', 'idempotency key'] }
+        },
+        {
+          name: '김민서', domain: '출퇴근 기록',
+          s1: { act: '출근 도장 동시 클릭', code: 'if(!checkedIn) checkedIn=true', pain: '도장 두 번 찍힘 / 시각 덮어씀', concepts: ['race', 'lost update'] },
+          s2: { act: '"퇴근 처리 중" 플래그', pain: '플래그 변경 안 보임', concepts: ['visibility', 'JMM'] },
+          s3: { act: '단일/멀티 비교', concepts: ['atomicity 분해'] },
+          s4: { act: 'Spring 출퇴근 API (선택)', concepts: ['Bean 싱글톤'] }
+        },
+        {
+          name: '강희민', domain: '재고 관리',
+          s1: { act: '재고 1개, 두 명 동시 결제', code: 'if(stock>0) stock--', pain: '둘 다 성공 / 재고 음수', concepts: ['race', 'check-then-act', 'Heap 공유'] },
+          s2: { act: '재고 마감 플래그', pain: '마감 후에도 결제 성공', concepts: ['visibility', 'JMM'] },
+          s3: { act: '스레드 수 측정', concepts: ['atomicity 분해', '컨텍스트 스위칭'] },
+          s4: { act: 'Spring 결제 API (선택)', concepts: ['Bean 안전성'] }
+        },
+        {
+          name: '한재훈', domain: '조회수 / 좋아요',
+          s1: { act: '100명 동시 좋아요', code: 'count++', pain: '카운트 누락 (50~80)', concepts: ['race', 'count++ 비원자성'] },
+          s2: { act: '좋아요 닫힘 플래그', pain: '닫힘이 안 보임', concepts: ['visibility', 'JMM'] },
+          s3: { act: 'count++ vs AtomicInteger 측정', concepts: ['atomicity 분해', 'CAS'] },
+          s4: { act: 'Spring 좋아요 API (선택)', concepts: ['Bean 안전성'] }
+        },
+        {
+          name: '이가은', domain: '콘서트 좌석',
+          s1: { act: '100자리, 200명 동시 예매', code: 'if(seat.available) seat.assign()', pain: '같은 좌석 두 명에게 팔림', concepts: ['race', 'check-then-act'] },
+          s2: { act: '판매 마감 플래그', pain: '마감 후 예매 성공', concepts: ['visibility', 'JMM'] },
+          s3: { act: '스레드 수/sleep 측정', concepts: ['atomicity 분해', '컨텍스트 스위칭'] },
+          s4: { act: 'Spring 예매 API (선택)', concepts: ['Bean 안전성'] }
+        },
+        {
+          name: '박수진', domain: 'volatile 집중',
+          s1: { act: '도메인 race 가볍게 (예: 좋아요)', code: '간단 race 1번', pain: 'race 발생 확인', concepts: ['race'] },
+          s2: { act: 'stop flag · DCL · lazy init race 등 visibility 패턴 다양화', pain: 'volatile 없으면 안 멈춤 / 싱글톤 두 번 생성', concepts: ['visibility', 'JMM', 'happens-before', 'CPU 캐시'] },
+          s3: { act: 'volatile 있/없 측정 비교', concepts: ['CPU 캐시 동기화 비용'] },
+          s4: { act: 'volatile 면접 답변 카드 정리 (선택)', concepts: ['JMM 깊이'] }
+        },
+      ];
+
+      const phases = [
+        {
+          n: '1', weeks: '1–3주', wkCount: 3, title: '동시성과 트랜잭션', cycle: '주 1주제 · 모임 2번',
+          tlBg: 'bg-brand text-white',
+          why: '신입 90%가 무너지는 영역. 토스증권/카뱅 면접의 메인 사냥감입니다.',
+          topics: [
+            { w: '1주', t: 'JVM 메모리 모델 & 스레드',
+              goal: '멀티스레드 환경에서 본인 도메인의 race condition 직접 재현',
+              cs: '프로세스 vs 스레드, 컨텍스트 스위칭, 뮤텍스/세마포어, JVM 메모리 영역',
+              q: 'synchronized vs volatile 차이 / JVM 메모리 영역 5가지 / 스레드 안전이란' },
+            { w: '2주', t: '트랜잭션 & 격리수준',
+              goal: '4가지 격리수준에서 dirty read · phantom read 직접 재현',
+              cs: 'ACID, 정규화, 키 종류, 조인 4종류',
+              q: '@Transactional 동작 원리 / 격리수준 실무 선택 기준 / MVCC 동작' },
+            { w: '3주', t: '락 (DB락 + 분산락)',
+              goal: '비관적/낙관적/분산락 시나리오별 구현 + 데드락 재현',
+              cs: '데드락 4조건, 식사하는 철학자',
+              q: '동시 매수 잔고 음수 방지 / Redis 분산락 vs DB락 / 데드락 발생 조건' },
+          ]
+        },
+        {
+          n: '2', weeks: '4–6주', wkCount: 3, title: 'Spring 내부 풀어보기', cycle: '주 1주제',
+          tlBg: 'bg-indigo-500 text-white',
+          why: 'Spring이 내 코드를 가로채는 메커니즘. 면접에서 깊이 묻는 단골 주제.',
+          topics: [
+            { w: '4주', t: 'IoC 컨테이너 & 빈 생명주기',
+              goal: 'Spring 빈이 만들어지는 순서를 로그로 직접 추적',
+              cs: 'SOLID 5원칙, 의존성 역전 원칙',
+              q: 'IoC와 DI 차이 / 빈 스코프 종류 / @PostConstruct 호출 시점' },
+            { w: '5주', t: '프록시 & AOP',
+              goal: '@Transactional이 self-invocation에서 안 먹는 이유 직접 재현',
+              cs: '프록시 · 데코레이터 · 책임 연쇄 패턴',
+              q: 'JDK 프록시 vs CGLIB / @Transactional 동작 안 되는 케이스 / AOP weaving 시점' },
+            { w: '6주', t: '이벤트 기반 아키텍처',
+              goal: 'ApplicationEventPublisher로 도메인 분리 + Kafka 비교',
+              cs: '동기 vs 비동기, 옵저버 패턴, 메시지 큐',
+              q: '트랜잭션과 이벤트 발행 순서 / @TransactionalEventListener 시점' },
+          ]
+        },
+        {
+          n: '3', weeks: '7–9주', wkCount: 3, title: '데이터 계층', cycle: '주 1주제',
+          tlBg: 'bg-purple-500 text-white',
+          why: '토스 · 카카오 · 네이버 백엔드 면접의 90%. 손으로 깨뜨려본 사람만 답할 수 있음.',
+          topics: [
+            { w: '7주', t: 'JPA 영속성 & N+1',
+              goal: 'N+1 문제 발생시키고 fetch join · EntityGraph 비교',
+              cs: '조인 종류, 카디널리티, 1:N 관계',
+              q: '영속성 컨텍스트 1차 캐시 / N+1 해결 3가지 / @OneToMany 기본 fetch' },
+            { w: '8주', t: '인덱스 & 쿼리 최적화',
+              goal: '100만 건 데이터로 인덱스 유무 쿼리 시간 측정',
+              cs: 'B-tree vs Hash, 시간복잡도, 디스크 I/O',
+              q: '인덱스 동작 원리 / 복합 인덱스 순서 / explain analyze 보는 법' },
+            { w: '9주', t: '캐시 (로컬 + 분산)',
+              goal: 'Caffeine 로컬 캐시 + Redis 분산 캐시 처리량 비교',
+              cs: '메모리 계층, LRU/LFU, 페이지 캐시',
+              q: '캐시 일관성 / TTL 정하는 기준 / 캐시 무효화 전략' },
+          ]
+        },
+        {
+          n: '4', weeks: '10–12주', wkCount: 3, title: '네트워크 · 인증 · 관측성', cycle: '주 1주제',
+          tlBg: 'bg-cyan-500 text-white',
+          why: '브라우저에서 서버까지 모든 길목 + 운영의 눈과 귀. 보안과 성능의 첫 방어선.',
+          topics: [
+            { w: '10주', t: 'HTTP & 커넥션풀',
+              goal: 'HikariCP 풀 사이즈에 따른 처리량 변화 직접 측정',
+              cs: 'OSI 7계층, TCP/UDP, 3-way handshake',
+              q: 'HTTP/1.1 vs HTTP/2 / 커넥션 풀 사이즈 결정 기준 / Keep-Alive' },
+            { w: '11주', t: '인증/인가 (Session vs JWT)',
+              goal: 'Session 방식과 JWT 방식 둘 다 구현해서 비교',
+              cs: '대칭/비대칭 암호화, 해시/솔트, 쿠키 vs 세션 vs 토큰',
+              q: 'JWT 단점 / RefreshToken 왜 필요 / OAuth 동작 흐름' },
+            { w: '12주', t: '관측성 (로깅 · 메트릭 · 트레이싱)',
+              goal: '마이크로미터 + Prometheus + 분산 트레이싱 직접 붙이기',
+              cs: '분산 시스템, CAP 정리, 가용성 vs 일관성',
+              q: '로그 레벨 기준 / 분산 트레이싱 왜 필요 / 메트릭/로그/트레이스 차이' },
+          ]
+        },
+        {
+          n: '5', weeks: '13–17주', wkCount: 5, title: '시스템 디자인 + 통합 프로젝트', cycle: '확장 사이클',
+          tlBg: 'bg-emerald-500 text-white',
+          why: '시스템 디자인 워크숍과 모의면접으로 마무리. 통합 프로젝트(14~16주)는 멤버 협의 후 결정 (미정).',
+          topics: [
+            { w: '13주', t: '시스템 디자인 워크숍', hidden: true,
+              goal: 'URL 단축기 · 채팅 · 주문 시스템 화이트보드 모의 설계',
+              cs: '스케일링, CDN, 로드밸런싱, 메시지 큐, NoSQL',
+              q: '트위터 타임라인 설계 / 단축 URL 설계 / 주문 시스템 설계' },
+            { w: '14주', t: '통합 ① 매핑 워크숍 (미정)',
+              goal: '본인 부캠 프로젝트 가져와서 12주제 중 5~6개 적용 가능한 것 매핑 · 운영진 검토',
+              cs: '도메인 분석, 토픽-기능 매핑, 우선순위 결정',
+              q: '내 프로젝트의 어디에 락이 필요한가 / 적용 우선순위 / 예상 통증' },
+            { w: '15주', t: '통합 ② 구현 + 측정 (미정)',
+              goal: '본인 프로젝트에 5~6개 토픽 실제 적용 + k6/JMeter 부하 테스트',
+              cs: '실전 트레이드오프, 측정 기반 의사결정',
+              q: '왜 이 기술 선택 / 다른 선택지 / 측정 결과 (TPS · 응답시간)' },
+            { w: '16주', t: '통합 ③ 비교 발표 (미정)',
+              goal: '7명이 "내 프로젝트에 X 적용한 사례" 발표 (1인 15분) + 면접 답변 카드 작성',
+              cs: '같은 토픽 다른 도메인 비교, 트레이드오프 회고',
+              q: '우리 멤버는 분산락 썼는데 나는 왜 비관적 락? / 비교 답변 훈련' },
+            { w: '17주', t: '모의면접 + 회고',
+              goal: '7명 페어 매칭 모의면접 · 답변 카드 정리 · 회고',
+              cs: '면접 답변 구조화, 30초 압축',
+              q: '실전 시뮬레이션 (CS + 시스템 디자인 + 인성)' },
+          ]
+        },
+      ];
+
+      return (
+        <div className="min-h-screen">
+          {/* Header */}
+          <header className="sticky top-0 z-40 backdrop-blur-md bg-white/85 border-b border-line">
+            <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-md bg-brand flex items-center justify-center text-white font-bold text-[11px]">CS</div>
+                <span className="font-bold text-sm tracking-tight">CS Study</span>
+              </div>
+              <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-ink-soft">
+                <a href="#cycle" className="hover:text-ink transition-colors">학습 방식</a>
+                <a href="#curriculum" className="hover:text-ink transition-colors">커리큘럼</a>
+                <a href="#weekly" className="hover:text-ink transition-colors">매주 모임</a>
+                <a href="#output" className="hover:text-ink transition-colors">내 할 일</a>
+              </nav>
+            </div>
+          </header>
+
+          {/* Hero */}
+          <section className="border-b border-line">
+            <div className="max-w-5xl mx-auto px-6 py-20 md:py-28">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-faint text-brand text-xs font-bold mb-6">
+                <span className="w-1.5 h-1.5 rounded-full bg-brand animate-pulse"></span>
+                7명 · 곧 시작
+              </div>
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.1] mb-6">
+                20주 동안<br/>
+                <span className="gradient-text">직접 깨뜨리고 풀어내는</span><br/>
+                CS 스터디
+              </h1>
+              <p className="text-lg md:text-xl text-ink-soft mb-10 max-w-xl leading-relaxed">
+                책으로 외운 답변은 면접관이 한 마디로 알아챕니다.<br/>
+                통증을 직접 겪은 사람만 진짜 강점이 됩니다.
+              </p>
+              <div className="flex flex-wrap gap-x-8 gap-y-3 text-sm">
+                <div><span className="block text-3xl font-bold text-ink num leading-none mb-1">17<span className="text-base text-ink-mute font-medium ml-0.5">주</span></span><span className="text-ink-mute">약 4개월</span></div>
+                <div><span className="block text-3xl font-bold text-ink num leading-none mb-1">12</span><span className="text-ink-mute">핵심 주제 + 시스템 디자인</span></div>
+                <div><span className="block text-3xl font-bold text-ink num leading-none mb-1">7<span className="text-base text-ink-mute font-medium ml-0.5">명</span></span><span className="text-ink-mute">한 자리 한 사람</span></div>
+                <div><span className="block text-3xl font-bold text-ink num leading-none mb-1">4<span className="text-base text-ink-mute font-medium ml-0.5">시간 / 주</span></span><span className="text-ink-mute">매주 2회 (월/목)</span></div>
+              </div>
+            </div>
+          </section>
+
+          {/* Learning cycle */}
+          <section id="cycle" className="py-20 md:py-24 border-b border-line">
+            <div className="max-w-5xl mx-auto px-6">
+              <div className="mb-10 text-center">
+                <p className="text-xs font-bold text-brand mb-2 tracking-wider uppercase">한 주제, 세 단계</p>
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">모든 주제는 같은 사이클로</h2>
+              </div>
+              <div className="grid md:grid-cols-3 gap-3">
+                {[
+                  { n: '01', step: '겪기', tag: '시나리오 MD · 30분 검색 금지', desc: '운영자가 초안 만들고 모임에서 함께 다듬은 시나리오 MD로 직접 깨뜨려본다.' },
+                  { n: '02', step: '배우기', tag: '이론으로 추적', desc: '"왜 깨졌나"를 이론으로 파고든다. 이때 이론이 들어온다.' },
+                  { n: '03', step: '해결', tag: '발표 + 블로그', desc: '기술을 적용하고 변화를 측정한다. 글로 굳힌다.' },
+                ].map((s, i) => (
+                  <div key={i} className="bg-white rounded-2xl p-7 border border-line">
+                    <div className="flex items-baseline gap-2.5 mb-1">
+                      <span className="text-sm font-mono text-brand font-bold num">{s.n}</span>
+                      <h3 className="text-xl font-bold tracking-tight">{s.step}</h3>
+                    </div>
+                    <p className="text-xs text-ink-mute font-semibold mb-4">{s.tag}</p>
+                    <p className="text-sm text-ink-soft leading-relaxed">{s.desc}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* 시나리오 예시 버튼 */}
+              <div className="text-center mt-6">
+                <button
+                  onClick={() => setScenarioOpen(true)}
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white border border-line text-sm font-semibold text-ink hover:bg-bg-alt hover:border-brand transition shadow-sm"
+                >
+                  <I.FileText className="w-4 h-4 text-brand" />
+                  시나리오 MD 예시 보기
+                </button>
+              </div>
+            </div>
+          </section>
+
+          {/* Curriculum */}
+          <section id="curriculum" className="py-20 md:py-24 bg-bg-alt border-b border-line">
+            <div className="max-w-5xl mx-auto px-6">
+              <div className="mb-10 text-center">
+                <p className="text-xs font-bold text-brand mb-2 tracking-wider uppercase">커리큘럼</p>
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">17주 · 5 페이즈 · 12 주제 + 통합</h2>
+                <p className="text-sm text-ink-mute mt-3">매주 1주제 · 모임 2회 (월 시도 발표 / 목 해결 발표)</p>
+              </div>
+
+              {/* Timeline visual */}
+              <div className="bg-white rounded-2xl border border-line p-5 md:p-6 mb-6">
+                <p className="text-xs font-bold text-ink-mute tracking-wider uppercase mb-3">17주 비중</p>
+                <div className="flex items-stretch h-12 rounded-lg overflow-hidden border border-line">
+                  {phases.map((p, i) => (
+                    <div key={i} className={`${p.tlBg} flex flex-col items-center justify-center px-1 border-r border-white/30 last:border-r-0`} style={{ flexGrow: p.wkCount }}>
+                      <p className="text-[11px] font-bold leading-none">P{p.n}</p>
+                      <p className="text-[9px] num font-mono opacity-80 mt-0.5">{p.wkCount}주</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex justify-between text-[10px] num font-mono text-ink-mute mt-2 px-0.5">
+                  <span>1주</span><span>3주</span><span>6주</span><span>9주</span><span>12주</span><span>17주</span>
+                </div>
+              </div>
+
+              {/* Phase + topics detail */}
+              <div className="space-y-8">
+                {phases.map((p, i) => (
+                  <div key={i}>
+                    {/* Phase header */}
+                    <div className="bg-white rounded-2xl border border-line p-5 mb-3">
+                      <div className="flex items-start gap-3">
+                        <div className={`w-12 h-12 rounded-xl ${p.tlBg} flex items-center justify-center font-bold text-lg flex-shrink-0`}>
+                          {p.n}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-1">
+                            <p className="text-[10px] font-bold text-ink-mute tracking-wider uppercase num">PHASE {p.n}</p>
+                            <span className="text-xs num font-mono text-ink-mute">{p.weeks} · {p.cycle}</span>
+                          </div>
+                          <h3 className="text-lg font-bold tracking-tight mb-1.5">{p.title}</h3>
+                          <p className="text-sm text-ink-soft leading-relaxed">{p.why}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Topics grid */}
+                    <div className="grid md:grid-cols-3 gap-3">
+                      {p.topics.filter(t => !t.hidden).map((t, j) => (
+                        <div key={j} className="bg-white rounded-2xl border border-line p-5 flex flex-col">
+                          <div className="flex items-center justify-between mb-3 pb-3 border-b border-line-soft">
+                            <span className="text-[10px] num font-mono text-ink-mute bg-bg-alt px-2 py-0.5 rounded">{t.w}</span>
+                            <span className="text-[10px] num font-mono text-ink-mute">#{(i*3) + j + 1 - (i > 0 ? 0 : 0)}</span>
+                          </div>
+                          <h4 className="font-bold mb-4 leading-snug">{t.t}</h4>
+                          <div className="space-y-3 flex-1">
+                            <div>
+                              <p className="text-[10px] font-bold text-brand tracking-wider uppercase mb-1">학습 목표</p>
+                              <p className="text-xs text-ink-soft leading-relaxed">{t.goal}</p>
+                            </div>
+                            <div>
+                              <p className="text-[10px] font-bold text-amber-600 tracking-wider uppercase mb-1">겪기에서 만나는 CS</p>
+                              <p className="text-xs text-ink-soft leading-relaxed">{t.cs}</p>
+                            </div>
+                            <div>
+                              <p className="text-[10px] font-bold text-emerald-600 tracking-wider uppercase mb-1">면접 단골 질문</p>
+                              <p className="text-xs text-ink-soft leading-relaxed">{t.q}</p>
+                            </div>
+                          </div>
+                          {i === 0 && j === 0 && (
+                            <button
+                              onClick={() => setTopicFlowOpen(true)}
+                              className="mt-4 inline-flex items-center justify-center gap-1.5 w-full px-3 py-2 rounded-lg bg-brand-faint text-brand text-xs font-bold hover:bg-brand hover:text-white transition"
+                            >
+                              <I.Users className="w-3.5 h-3.5" />
+                              7명 학습 흐름 보기
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Weekly meeting */}
+          <section id="weekly" className="py-20 md:py-24 border-b border-line">
+            <div className="max-w-5xl mx-auto px-6">
+              <div className="mb-10 text-center">
+                <p className="text-xs font-bold text-brand mb-2 tracking-wider uppercase">한 주제 흐름</p>
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">1주 동안 어떻게 굴러가나</h2>
+                <p className="text-sm text-ink-mute mt-3">매주 1주제 · 모임 2번 (월 시도 / 목 해결)</p>
+              </div>
+
+              {/* 1-week topic flow */}
+              <div className="bg-white rounded-2xl border border-line p-6 md:p-8 mb-3">
+                <p className="text-xs font-bold text-ink-mute tracking-wider uppercase mb-5">한 주제 = 1주 = 집에서 학습 + 모임 2번</p>
+
+                {/* 단계 아이콘 row */}
+                <div className="flex items-stretch h-7 mb-1.5">
+                  <div className="flex items-center justify-center bg-red-50 text-red-700 text-[10px] font-bold rounded-t border-t border-l border-r border-red-100" style={{flexGrow: 3}}>01 겪기</div>
+                  <div style={{flexGrow: 1.2}}></div>
+                  <div className="flex items-center justify-center bg-amber-50 text-amber-700 text-[10px] font-bold rounded-t border-t border-l border-r border-amber-100" style={{flexGrow: 2}}>02 배우기 → 03 해결</div>
+                  <div style={{flexGrow: 1.2}}></div>
+                </div>
+
+                {/* 메인 타임라인 - 큰 바 */}
+                <div className="flex items-stretch h-24 rounded-xl overflow-hidden border border-line mb-2 shadow-sm">
+                  <div className="bg-red-100 text-red-900 flex flex-col items-center justify-center px-2 border-r border-white" style={{flexGrow: 3}}>
+                    <span className="text-[9px] font-mono opacity-60">집 · 금~일</span>
+                    <p className="text-sm font-bold mt-0.5">시나리오 받고 깨뜨려보기</p>
+                    <p className="text-[10px] opacity-70 mt-0.5">3일</p>
+                  </div>
+                  <div className="bg-amber-500 text-white flex flex-col items-center justify-center px-1 border-r border-white/30" style={{flexGrow: 1.2}}>
+                    <span className="text-[9px] font-mono opacity-80">월 모임</span>
+                    <p className="text-sm font-bold mt-0.5 leading-tight text-center">시도 발표</p>
+                    <p className="text-[10px] opacity-90 mt-0.5">2시간</p>
+                  </div>
+                  <div className="bg-amber-100 text-amber-900 flex flex-col items-center justify-center px-2 border-r border-white" style={{flexGrow: 2}}>
+                    <span className="text-[9px] font-mono opacity-60">집 · 화~수</span>
+                    <p className="text-sm font-bold mt-0.5">이론 + 해결 + PR</p>
+                    <p className="text-[10px] opacity-70 mt-0.5">2일</p>
+                  </div>
+                  <div className="bg-brand text-white flex flex-col items-center justify-center px-1" style={{flexGrow: 1.2}}>
+                    <span className="text-[9px] font-mono opacity-80">목 모임</span>
+                    <p className="text-sm font-bold mt-0.5 leading-tight text-center">해결 발표</p>
+                    <p className="text-[10px] opacity-90 mt-0.5">2시간</p>
+                  </div>
+                </div>
+
+                {/* Day markers */}
+                <div className="flex text-[10px] num font-mono text-ink-mute mb-5">
+                  <div className="text-left" style={{flexGrow: 3}}>이전 목 · 시나리오 공개</div>
+                  <div className="text-center" style={{flexGrow: 1.2}}>월 · 시도</div>
+                  <div className="text-center" style={{flexGrow: 2}}>화 · PR 마감</div>
+                  <div className="text-right" style={{flexGrow: 1.2}}>목 · 해결</div>
+                </div>
+
+                {/* 한 줄 요약 */}
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-ink-soft justify-center pt-4 border-t border-line-soft">
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-red-300"></span>집에서 3일</span>
+                  <span className="text-ink-mute">→</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-amber-500"></span>월 시도 발표</span>
+                  <span className="text-ink-mute">→</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-amber-300"></span>집에서 2일</span>
+                  <span className="text-ink-mute">→</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-brand"></span>목 해결 발표</span>
+                </div>
+              </div>
+
+              {/* 매주 모임 시간표 헤더 */}
+              <div className="mb-3 mt-8">
+                <p className="text-xs font-bold text-brand mb-1.5 tracking-wider uppercase">매주 모임 · 각 2시간 · 7명 모두 발표</p>
+              </div>
+
+              {/* 월 모임 timeline */}
+              <div className="bg-white rounded-2xl border border-line p-6 md:p-8 mb-3">
+                <div className="flex items-center gap-2.5 mb-4">
+                  <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-sm">월</div>
+                  <div>
+                    <p className="text-[10px] font-bold text-ink-mute tracking-wider uppercase">월 모임</p>
+                    <h3 className="font-bold text-sm">시도 발표 — "어떻게 부딪혔나"</h3>
+                  </div>
+                </div>
+                <div className="flex items-stretch h-16 rounded-xl overflow-hidden border border-line">
+                  {[
+                    { label: '체크인', min: 10, color: 'bg-slate-100 text-slate-700' },
+                    { label: '7명 시도 발표 (1인 10분)', min: 70, color: 'bg-amber-500 text-white' },
+                    { label: 'Q&A · 토론', min: 20, color: 'bg-amber-100 text-amber-900' },
+                    { label: '다음 시도 방향 회의', min: 20, color: 'bg-emerald-100 text-emerald-800' },
+                  ].map((b, i) => (
+                    <div key={i} className={`${b.color} flex flex-col items-center justify-center px-2 border-r border-white/20 last:border-r-0`} style={{ flexGrow: b.min }}>
+                      <p className="text-[11px] font-bold leading-none whitespace-nowrap">{b.label}</p>
+                      <p className="text-[10px] num font-mono opacity-80 mt-0.5">{b.min}분</p>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[11px] text-ink-mute mt-3">PR 마감: 토 23:59 (모임 48h 전) · 본인이 부딪혀본 코드 + 시도한 방법 공유</p>
+              </div>
+
+              {/* 목 모임 timeline */}
+              <div className="bg-white rounded-2xl border border-line p-6 md:p-8 mb-3">
+                <div className="flex items-center gap-2.5 mb-4">
+                  <div className="w-8 h-8 rounded-lg bg-brand-faint text-brand flex items-center justify-center font-bold text-sm">목</div>
+                  <div>
+                    <p className="text-[10px] font-bold text-ink-mute tracking-wider uppercase">목 모임</p>
+                    <h3 className="font-bold text-sm">해결 발표 — "어떻게 풀었고 이론은 이거다"</h3>
+                  </div>
+                </div>
+                <div className="flex items-stretch h-16 rounded-xl overflow-hidden border border-line">
+                  {[
+                    { label: '체크인', min: 10, color: 'bg-slate-100 text-slate-700' },
+                    { label: '7명 해결 발표 (1인 10분)', min: 70, color: 'bg-brand text-white' },
+                    { label: 'Q&A · 토론', min: 20, color: 'bg-blue-100 text-blue-800' },
+                    { label: '회고 + 다음 시나리오 공개', min: 20, color: 'bg-emerald-100 text-emerald-800' },
+                  ].map((b, i) => (
+                    <div key={i} className={`${b.color} flex flex-col items-center justify-center px-2 border-r border-white/20 last:border-r-0`} style={{ flexGrow: b.min }}>
+                      <p className="text-[11px] font-bold leading-none whitespace-nowrap">{b.label}</p>
+                      <p className="text-[10px] num font-mono opacity-80 mt-0.5">{b.min}분</p>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[11px] text-ink-mute mt-3">PR 마감: 화 23:59 (모임 48h 전) · 모임 끝에 다음 주 시나리오 공개 + 학습 방향 회의</p>
+              </div>
+
+              {/* 두 모임 발표 차이 */}
+              <div className="bg-white rounded-2xl border border-line p-6 md:p-8">
+                <div className="mb-5">
+                  <h3 className="font-bold text-base mb-1">두 모임의 발표 차이</h3>
+                  <p className="text-xs text-ink-mute">7명 모두 1인 10분씩. 같은 주제를 두 시점에서 본다.</p>
+                </div>
+                <div className="grid md:grid-cols-2 gap-3">
+                  {[
+                    { day: '월', t: '시도 발표', d: '본인 도메인에서 어떻게 깨뜨렸나, 막힌 곳, 다음에 어떤 방향으로 풀어볼지', items: ['도메인 + 출발 코드 시연', '시도한 방법들 (효과 없었던 것 포함)', '막힌 의문점', '다음 시도 계획'], bg: 'bg-amber-50 border-amber-100', tagBg: 'bg-amber-100 text-amber-800' },
+                    { day: '목', t: '해결 발표', d: '어떻게 풀었고 이론적으로 왜 그런지, 면접에서 어떻게 답할 수 있는지', items: ['적용한 해결책 (코드)', '측정 결과 (수치 비교)', '이론 추적 ("이래서 그랬구나")', '면접 답변 카드 초안'], bg: 'bg-blue-50 border-blue-100', tagBg: 'bg-blue-100 text-blue-800' },
+                  ].map((r, i) => (
+                    <div key={i} className={`rounded-xl p-5 ${r.bg} border`}>
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className={`inline-block text-[11px] font-bold px-2 py-0.5 rounded ${r.tagBg}`}>{r.day}</span>
+                        <p className="font-bold text-sm">{r.t}</p>
+                      </div>
+                      <p className="text-xs text-ink-soft leading-relaxed mb-3">{r.d}</p>
+                      <ul className="space-y-1.5">
+                        {r.items.map((it, j) => (
+                          <li key={j} className="flex items-start gap-1.5 text-[11px] text-ink-soft leading-relaxed">
+                            <I.Check className="w-3 h-3 text-brand mt-0.5 flex-shrink-0" />
+                            <span>{it}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* My weekly tasks */}
+          <section id="output" className="py-20 md:py-24 bg-bg-alt border-b border-line">
+            <div className="max-w-5xl mx-auto px-6">
+              <div className="mb-10 text-center">
+                <p className="text-xs font-bold text-brand mb-2 tracking-wider uppercase">매주 내 할 일</p>
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">3가지만 챙기면 됩니다</h2>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-3 mb-8">
+                {[
+                  { icon: I.GitPullRequest, n: '1', t: 'PR 올리기', when: '모임 48시간 전 (화요일 23:59)', items: ['제목: [N주차/주제] 본인이름', '겪기 commit + 해결 commit', '본문은 아래 템플릿 사용', '다른 멤버 PR 1~2개 코멘트 (LGTM 금지)'] },
+                  { icon: I.BookOpen, n: '2', t: '블로그 1편', when: '발표 주 일요일까지 초안', items: ['"내가 깨뜨렸다" 톤', '코드 + 측정 + 트레이드오프', '면접 답변 카드 1~2문장 포함'] },
+                  { icon: I.MessageSquare, n: '3', t: '디스코드', when: '막힌 거 즉시 공유', items: ['#질문 채널에 코드 + 에러', '누구든 답하면 됨', '5분 안에 해결되는 게 보통'] },
+                ].map((o, i) => (
+                  <div key={i} className="bg-white rounded-2xl p-6 border border-line">
+                    <div className="flex items-center gap-3 mb-4 pb-4 border-b border-line-soft">
+                      <div className="w-10 h-10 rounded-xl bg-brand-faint text-brand flex items-center justify-center">
+                        <o.icon className="w-5 h-5" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="text-xs font-mono text-ink-mute num">0{o.n}</span>
+                          <h3 className="font-bold">{o.t}</h3>
+                        </div>
+                        <p className="text-xs text-brand font-semibold">{o.when}</p>
+                      </div>
+                    </div>
+                    <ul className="space-y-2">
+                      {o.items.map((it, j) => (
+                        <li key={j} className="flex items-start gap-2 text-sm text-ink-soft leading-relaxed">
+                          <I.Check className="w-3.5 h-3.5 text-brand mt-0.5 flex-shrink-0" />
+                          <span>{it}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+
+              {/* AI 사용 규칙 */}
+              <div className="rounded-2xl border border-line bg-white p-5 mb-3">
+                <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <I.Wrench className="w-4 h-4 text-brand" />
+                    <p className="text-xs font-bold text-ink-mute tracking-wider uppercase">AI 사용 규칙 · 바이브 코딩 금지</p>
+                  </div>
+                  <button
+                    onClick={() => setClaudeMdOpen(true)}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand hover:underline"
+                  >
+                    <I.FileText className="w-3.5 h-3.5" />
+                    CLAUDE.md 전체 보기
+                  </button>
+                </div>
+                <p className="text-sm text-ink-soft leading-relaxed mb-4">
+                  Claude Code · Cursor · Copilot 사용 OK. 단 <strong className="text-ink">직접 답 받기 금지</strong>. GitHub repo 루트의 <code className="text-[12px] bg-bg-alt px-1.5 py-0.5 rounded font-mono">CLAUDE.md</code>가 AI 행동을 강제합니다 — 3단계 힌트만 받게 됨.
+                </p>
+                <div className="grid sm:grid-cols-3 gap-2">
+                  <div className="p-3 rounded-lg bg-bg-alt border border-line-soft">
+                    <p className="text-[10px] font-bold text-brand mb-1 tracking-wider uppercase">1차 힌트</p>
+                    <p className="text-xs font-semibold text-ink mb-0.5">방향만 제시</p>
+                    <p className="text-[11px] text-ink-mute leading-relaxed">"동시성 문제일 가능성이 있어"</p>
+                  </div>
+                  <div className="p-3 rounded-lg bg-bg-alt border border-line-soft">
+                    <p className="text-[10px] font-bold text-amber-600 mb-1 tracking-wider uppercase">2차 힌트</p>
+                    <p className="text-xs font-semibold text-ink mb-0.5">키워드만</p>
+                    <p className="text-[11px] text-ink-mute leading-relaxed">"JMM happens-before 찾아봐"</p>
+                  </div>
+                  <div className="p-3 rounded-lg bg-bg-alt border border-line-soft">
+                    <p className="text-[10px] font-bold text-emerald-600 mb-1 tracking-wider uppercase">3차 힌트</p>
+                    <p className="text-xs font-semibold text-ink mb-0.5">스켈레톤만</p>
+                    <p className="text-[11px] text-ink-mute leading-relaxed">핵심 로직은 비워둠</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* PR 본문 템플릿 */}
+              <div className="rounded-2xl border border-line bg-white p-5 mb-3">
+                <div className="flex items-center gap-2 mb-3">
+                  <I.GitPullRequest className="w-4 h-4 text-brand" />
+                  <p className="text-xs font-bold text-ink-mute tracking-wider uppercase">PR 본문 템플릿</p>
+                </div>
+                <pre className="bg-bg-alt rounded-lg p-4 text-[11px] leading-relaxed overflow-x-auto text-ink-soft" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace' }}>
+{`## 목표
+- 시나리오: 좌석 2개에 동시 매수 10건 발생
+- 재현하려는 통증: 잔고가 음수로 떨어지는 race condition
+
+## 환경
+- Spring Boot 3.x / PostgreSQL 16 / Redis 7
+- 부하 도구: k6, 100 RPS × 30초
+
+## 시도한 거 (시간순)
+1. 락 없이 돌려보기 → 50번 중 12번 잔고 음수 발생
+2. synchronized → 단일 JVM에선 OK, 다중 인스턴스 가정 시 안 통함
+3. 비관적 락 (SELECT FOR UPDATE) → 안전하지만 느림
+4. Redis 분산락 → 안전 + 빠름
+
+## 측정 결과
+| 방식        | TPS | 응답시간 | 잔고 음수 |
+|------------|-----|---------|----------|
+| 락 없음     | 200 | 50ms    | 12회     |
+| 비관적 락   | 90  | 110ms   | 0회      |
+| 분산락      | 130 | 85ms    | 0회      |
+
+## 스크린샷 (있으면)
+<!-- k6 결과 캡처, 잔고 음수 떨어지는 로그, 데드락 트레이스 등 -->
+![k6 결과](images/k6-result.png)
+![잔고 음수 로그](images/balance-negative.png)
+
+## 막힌 곳 / 의문점
+- 비관적 락 timeout 미설정 시 데드락 가능? 어떻게 잡지?
+- 분산락 만료 시간 합리적으로 정하는 기준?
+
+## 면접 답변 카드 초안
+> Q. "비관적 락 vs 분산락 어떻게 선택했어요?"
+> A. 단일 인스턴스면 비관적 락이 단순. 다중 인스턴스 필요해서 분산락 도입.
+>    측정해보니 분산락이 TPS 1.4배 높음 (네트워크 hop 있는데 의외).
+>    트레이드오프: 분산락은 인프라(Redis) 추가 비용.
+
+## 느낀점 / 회고
+- 직접 깨뜨려보지 않았으면 "락이 왜 필요한지" 책으로 외우기만 했을 듯
+- 분산락 만료 시간 결정이 까다로움 — 짧으면 락 풀리고 길면 대기 누적
+- 다음 주제(인덱스)에서 락이 인덱스 락 모드에 어떻게 영향 주는지 궁금`}
+                </pre>
+              </div>
+
+              {/* 면접 답변 카드 설명 */}
+              <div className="rounded-2xl border border-line bg-white p-5 mt-3">
+                <div className="flex items-center gap-2 mb-3">
+                  <I.Target className="w-4 h-4 text-brand" />
+                  <p className="text-xs font-bold text-ink-mute tracking-wider uppercase">면접 답변 카드란?</p>
+                </div>
+                <p className="text-sm text-ink-soft leading-relaxed mb-4">
+                  200시간 학습을 30초 답변으로 압축한 한 장. 주제마다 1~2장 누적 → 면접 직전 30분이면 24장 다 훑음.
+                </p>
+                <div className="bg-bg-alt rounded-lg p-4 text-xs leading-relaxed">
+                  <p className="font-bold text-ink mb-1.5">Q. "비관적 락 vs 분산락 어떻게 선택했어요?"</p>
+                  <p className="text-ink-soft mb-3 leading-relaxed">A. 단일 인스턴스라면 비관적 락이 단순. 다중 인스턴스 가정해서 분산락도 구현 비교 — k6 100 RPS에서 분산락 TPS 1.4배 높았음. 다만 Redis 인프라 비용 트레이드오프.</p>
+                  <p className="text-[10px] num font-mono text-ink-mute">[근거] PR #5 · [태그] #락 #5주차</p>
+                </div>
+                <div className="grid sm:grid-cols-3 gap-2 mt-4 text-[11px] text-ink-soft">
+                  <div className="p-2.5 rounded bg-bg-alt/60"><strong className="text-brand">직접 한 경험</strong> — "직접 깨뜨리고 측정했습니다"</div>
+                  <div className="p-2.5 rounded bg-bg-alt/60"><strong className="text-amber-600">숫자</strong> — TPS · 응답시간 같은 구체 수치</div>
+                  <div className="p-2.5 rounded bg-bg-alt/60"><strong className="text-emerald-600">트레이드오프</strong> — 다른 선택지 단점</div>
+                </div>
+                <p className="text-[11px] text-ink-mute mt-4">매주 PR의 "면접 답변 카드 초안"이 쌓임 → 19주차 정리 → 20주차 모의면접에서 사용</p>
+              </div>
+
+            </div>
+          </section>
+
+          {/* Footer */}
+          <footer className="py-12 bg-white">
+            <div className="max-w-5xl mx-auto px-6">
+              <div className="text-center">
+                <p className="text-2xl md:text-3xl font-bold tracking-tight mb-3 max-w-2xl mx-auto leading-tight">
+                  20주 뒤, 면접관의 한 마디 질문에<br/>
+                  <span className="gradient-text">손이 먼저 코드를 그립니다.</span>
+                </p>
+                <p className="text-sm text-ink-mute mb-8">완주 시 약 240시간 학습 · GitHub PR · 블로그 15편 · 면접 답변 카드</p>
+                <div className="inline-flex items-center gap-2 text-xs text-ink-mute">
+                  <div className="w-5 h-5 rounded bg-brand flex items-center justify-center text-white font-bold text-[9px]">CS</div>
+                  <span className="font-medium text-ink">CS Study</span>
+                  <span>·</span>
+                  <span>20주 백엔드 면접 정복 · v3.0</span>
+                </div>
+              </div>
+            </div>
+          </footer>
+
+          {/* 시나리오 예시 Modal */}
+          {scenarioOpen && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 backdrop-blur-sm p-4"
+              onClick={() => setScenarioOpen(false)}
+            >
+              <div
+                className="bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden shadow-2xl flex flex-col"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between px-6 py-4 border-b border-line flex-shrink-0">
+                  <div>
+                    <p className="text-[10px] font-bold text-brand tracking-wider uppercase mb-0.5">시나리오 MD 예시</p>
+                    <h3 className="font-bold text-lg">1주차 — JVM 메모리 모델 & 스레드</h3>
+                  </div>
+                  <button
+                    onClick={() => setScenarioOpen(false)}
+                    className="w-9 h-9 rounded-lg hover:bg-bg-alt flex items-center justify-center text-ink-mute transition"
+                    aria-label="닫기"
+                  >
+                    <I.X className="w-5 h-5" />
+                  </button>
+                </div>
+                <div className="overflow-y-auto p-6">
+                  <pre className="bg-bg-alt rounded-lg p-5 text-[12px] leading-relaxed text-ink-soft whitespace-pre-wrap" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace' }}>
+{`# 01. JVM 메모리 모델 & 스레드 — 겪기 시나리오
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 0. 개념 숙지 (코딩 시작 전 필수)
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 필수 개념 (AI와 대화하며 숙지)
+1. 프로세스 vs 스레드
+2. JVM 메모리 영역 5가지
+3. 스레드 안전 (thread-safe)
+4. atomic operation
+5. 컨텍스트 스위칭
+
+## 자기 검증 (다음 STEP 통과 기준)
+다음 5개를 "입으로 막힘 없이" 설명 가능해야 STEP 1 시작:
+
+[ ] 프로세스 vs 스레드 차이 (메모리 공유 관점)
+[ ] JVM 메모리 영역 5개 + 어디가 공유, 어디가 스레드별
+[ ] 스레드 안전이란 (race condition 예시 1개)
+[ ] count++가 한 번에 일어나는가
+[ ] 단일 스레드는 왜 race condition이 안 일어나는가
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 1. 도메인 선택
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+같은 개념(race condition), 다른 도메인.
+끌리는 거 1개 선택 (또는 본인 부캠 프로젝트):
+
+- 은행 잔고 (잔고 음수)
+- 티켓팅 (좌석 중복 판매)
+- 선착순 쿠폰 (초과 발급)
+- 재고 관리 (1개 남았는데 두 명 결제)
+- 좋아요 카운터 (누락)
+- 포인트 적립 (중복 적립)
+- 본인 부캠 프로젝트 도메인 (자유)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 2. 통증 정의 (본인 도메인 1줄)
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+예) 티켓팅 도메인 선택 시:
+"공연 좌석 100개. 동시 매수 200건.
+같은 좌석이 두 명에게 팔리면 안 됨."
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 3. 환경
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- Java 17
+- Spring Boot 3.x (선택)
+- 부하: ExecutorService (Thread Pool)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 4. 출발 코드 (본인 도메인 기반)
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+본인 도메인에 맞게 직접 작성:
+- 공유 자원 변수 1개 (잔고/좌석/쿠폰/...)
+- 멀티 스레드로 그 변수 변경
+- 락/atomic/volatile 없이
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+금지 (30분 검색 금지)
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- synchronized, ReentrantLock, @Lock
+- AtomicInteger, AtomicLong, LongAdder
+- volatile
+- java.util.concurrent.locks.*
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+측정 포인트
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- 도메인 통증 발생 횟수 (음수 / 중복 / 누락)
+- 1000번 시도 중 몇 번 발생하는지
+- 스레드 수 변화 비교 (10 / 50 / 100 / 1000)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+시도하면 좋은 것 (선택)
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- 단일 스레드로 돌려보기 → 안 깨짐 확인
+- Thread.sleep(1) 넣어보기 → 깨짐 확률 변화
+- ThreadLocal로 분리 → 결과 깨끗해지나?`}
+                  </pre>
+                </div>
+                <div className="px-6 py-4 border-t border-line flex-shrink-0 bg-bg-alt">
+                  <p className="text-xs text-ink-mute leading-relaxed">
+                    <strong className="text-ink">시나리오 운영</strong>: 운영자가 초안 작성 → 모임 끝 20분에 다같이 보고 다듬음 → 다음 한 주 학습 시작. 답은 따로 적지 않음 — 멤버 각자가 PR로 풀어냄.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* CLAUDE.md Modal */}
+          {claudeMdOpen && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 backdrop-blur-sm p-4"
+              onClick={() => setClaudeMdOpen(false)}
+            >
+              <div
+                className="bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden shadow-2xl flex flex-col"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between px-6 py-4 border-b border-line flex-shrink-0">
+                  <div>
+                    <p className="text-[10px] font-bold text-brand tracking-wider uppercase mb-0.5">AI 사용 규칙</p>
+                    <h3 className="font-bold text-lg">CLAUDE.md</h3>
+                  </div>
+                  <button
+                    onClick={() => setClaudeMdOpen(false)}
+                    className="w-9 h-9 rounded-lg hover:bg-bg-alt flex items-center justify-center text-ink-mute transition"
+                    aria-label="닫기"
+                  >
+                    <I.X className="w-5 h-5" />
+                  </button>
+                </div>
+                <div className="overflow-y-auto p-6">
+                  <pre className="bg-bg-alt rounded-lg p-5 text-[12px] leading-relaxed text-ink-soft whitespace-pre-wrap" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace' }}>
+{`# CS 스터디 — AI 사용 규칙
+
+## 핵심 원칙: 바이브 코딩 금지
+이 스터디의 코드는 학습자가 직접 작성한다.
+AI는 **힌트와 리뷰**로만 돕는다.
+
+## 행동 규칙
+
+1. 코드를 직접 작성해주지 마라.
+   - "이렇게 하면 돼" → ❌
+   - "이 상황에서 어떤 문제가 생길까?" → ✅
+
+2. 3단계 힌트 시스템 (점진적으로):
+   - 1차: 방향 제시
+     예) "동시성 문제일 가능성이 있어. 두 스레드가 같은 변수를 만지면?"
+   - 2차: 키워드 제시
+     예) "JMM(Java Memory Model)과 happens-before를 찾아봐"
+   - 3차: 스켈레톤 제공 (핵심 로직은 비움)
+   - 최후: 코드 제공 + "왜 이렇게 되는지 설명해봐" 요구
+
+3. 코드 리뷰 요청 시
+   먼저 묻기: "이 코드에서 스스로 아쉬운 점 있어?"
+
+4. 막혔을 때
+   먼저 묻기: "지금 어디까지 이해한 상태야?"
+   이해한 부분은 인정한 후 다음 단계로 안내.
+
+## 시나리오 금지 키워드
+각 시나리오 MD의 "금지" 섹션을 따른다.
+멤버가 "synchronized 알려줘" 라고 물어도,
+시나리오 금지 목록에 있으면 답하지 마라.
+
+## 30분 룰
+"30분 동안 직접 시도했는가?" 먼저 확인.
+시도 안 했으면 그것부터 하라고 안내.
+
+## 적용 도구
+- Claude Code: 이 파일을 자동 인식
+- Cursor: .cursorrules 파일에 동일 내용 복사
+- Copilot: 워크스페이스 instructions에 복사`}
+                  </pre>
+                </div>
+                <div className="px-6 py-4 border-t border-line flex-shrink-0 bg-bg-alt">
+                  <p className="text-xs text-ink-mute leading-relaxed">
+                    <strong className="text-ink">설치</strong>: GitHub repo 루트에 <code className="bg-white px-1.5 py-0.5 rounded font-mono text-[11px]">CLAUDE.md</code> 두면 자동 적용. 멤버 로컬에도 동일 파일 복사 권장.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 7명 학습 흐름 Modal */}
+          {topicFlowOpen && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 backdrop-blur-sm p-4"
+              onClick={() => setTopicFlowOpen(false)}
+            >
+              <div
+                className="bg-white rounded-2xl max-w-6xl w-full max-h-[92vh] overflow-hidden shadow-2xl flex flex-col"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between px-6 py-4 border-b border-line flex-shrink-0">
+                  <div>
+                    <p className="text-[10px] font-bold text-brand tracking-wider uppercase mb-0.5">1주차 학습 흐름</p>
+                    <h3 className="font-bold text-lg">7명 · 같은 4단계 · 다른 도메인</h3>
+                  </div>
+                  <button
+                    onClick={() => setTopicFlowOpen(false)}
+                    className="w-9 h-9 rounded-lg hover:bg-bg-alt flex items-center justify-center text-ink-mute transition"
+                    aria-label="닫기"
+                  >
+                    <I.X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="overflow-y-auto p-5 md:p-6 space-y-3">
+                  {/* 공통 4단계 안내 + PR 경계 */}
+                  <div className="bg-gradient-to-r from-brand-faint to-blue-50/40 rounded-xl p-4 border border-brand/10">
+                    <p className="text-[10px] font-bold text-brand tracking-wider uppercase mb-3">공통 4단계 진행 + PR 경계</p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                      {[
+                        { n: '1', t: 'Race condition', d: '도메인 통증 직접 마주침', pr: '월 PR', prBg: 'bg-amber-100 text-amber-800' },
+                        { n: '2', t: 'Visibility 변형', d: 'flag 추가 → JMM 마주침', pr: '월 PR', prBg: 'bg-amber-100 text-amber-800' },
+                        { n: '3', t: '측정 + 분해 + 해결', d: '스레드 수 비교 + 락/atomic 적용', pr: '목 PR', prBg: 'bg-blue-100 text-blue-800' },
+                        { n: '4', t: 'Spring 통합 (선택)', d: 'Bean 안전성 체감', pr: '선택', prBg: 'bg-slate-100 text-slate-700' },
+                      ].map((s, i) => (
+                        <div key={i} className="bg-white rounded-lg p-3 border border-white">
+                          <div className="flex items-center justify-between mb-1">
+                            <p className="text-[10px] font-mono num text-brand font-bold">STAGE {s.n}</p>
+                            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${s.prBg}`}>{s.pr}</span>
+                          </div>
+                          <p className="text-xs font-bold text-ink mt-0.5">{s.t}</p>
+                          <p className="text-[10px] text-ink-mute mt-0.5 leading-snug">{s.d}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-brand/10 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] text-ink-soft">
+                      <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-amber-400"></span><strong className="text-ink">월 모임 PR 마감 (토 23:59)</strong> · STAGE 1~2까지</span>
+                      <span className="text-ink-mute">→</span>
+                      <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-brand"></span><strong className="text-ink">목 모임 PR 마감 (화 23:59)</strong> · STAGE 3까지</span>
+                    </div>
+                  </div>
+
+                  {/* 7명 카드 */}
+                  {week1Members.map((m, idx) => {
+                    const stages = [m.s1, m.s2, m.s3, m.s4];
+                    const stageColors = ['bg-red-50 border-red-100', 'bg-amber-50 border-amber-100', 'bg-blue-50 border-blue-100', 'bg-emerald-50 border-emerald-100'];
+                    const stageBadges = ['bg-red-100 text-red-700', 'bg-amber-100 text-amber-700', 'bg-blue-100 text-blue-700', 'bg-emerald-100 text-emerald-700'];
+                    const prTags = [
+                      { label: '월 PR', cls: 'bg-amber-200 text-amber-900' },
+                      { label: '월 PR', cls: 'bg-amber-200 text-amber-900' },
+                      { label: '목 PR', cls: 'bg-brand text-white' },
+                      { label: '선택', cls: 'bg-slate-200 text-slate-700' },
+                    ];
+                    return (
+                      <div key={idx} className="bg-white border border-line rounded-xl p-4 md:p-5">
+                        <div className="flex items-baseline gap-2 mb-3 pb-3 border-b border-line-soft">
+                          <span className="text-[10px] num font-mono text-ink-mute">M{idx+1}</span>
+                          <h4 className="font-bold text-base">{m.name}</h4>
+                          <span className="text-xs text-ink-mute">·</span>
+                          <p className="text-sm text-brand font-semibold">{m.domain}</p>
+                        </div>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-2">
+                          {stages.map((s, i) => (
+                            <div key={i} className={`rounded-lg p-3 border ${stageColors[i]} relative`}>
+                              <div className="flex items-center justify-between mb-2">
+                                <span className={`text-[10px] num font-mono font-bold px-1.5 py-0.5 rounded ${stageBadges[i]}`}>STAGE {i+1}</span>
+                                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${prTags[i].cls}`}>{prTags[i].label}</span>
+                              </div>
+                              <p className="text-xs font-bold text-ink mb-1.5 leading-snug">{s.act}</p>
+                              {s.code && (
+                                <p className="text-[10px] font-mono bg-white/60 px-2 py-1 rounded text-ink-soft mb-1.5 leading-snug">{s.code}</p>
+                              )}
+                              {s.pain && (
+                                <p className="text-[10px] text-ink-soft mb-2 leading-snug"><strong className="text-ink">통증:</strong> {s.pain}</p>
+                              )}
+                              <div className="flex flex-wrap gap-1">
+                                {s.concepts.map((c, k) => (
+                                  <span key={k} className="text-[9px] px-1.5 py-0.5 rounded bg-white border border-line text-ink-soft">{c}</span>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="px-6 py-4 border-t border-line flex-shrink-0 bg-bg-alt">
+                  <p className="text-xs text-ink-mute leading-relaxed">
+                    <strong className="text-ink">발표 시너지</strong>: 6명은 같은 race condition을 다른 도메인 옷 입혀서, 박수진 1명은 visibility 깊이. 월 시도 발표에서 "같은 메커니즘 다른 옷" 인사이트 + 목 해결 발표에서 락 종류별 비교.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
