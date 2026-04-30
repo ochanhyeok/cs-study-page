@@ -234,36 +234,67 @@
           {/* Learning cycle */}
           <section id="cycle" className="py-20 md:py-24 border-b border-line">
             <div className="max-w-5xl mx-auto px-6">
-              <div className="mb-10 text-center">
-                <p className="text-xs font-bold text-brand mb-2 tracking-wider uppercase">한 주제, 네 단계</p>
-                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">모든 주제는 같은 사이클로</h2>
-              </div>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-3">
-                {[
-                  { n: '00', step: '개념 숙지', tag: 'AI 대화 + 자기 발화', desc: '필수 개념을 AI와 대화하며 숙지. 입으로 막힘 없이 설명 가능해야 다음 단계로.' },
-                  { n: '01', step: '겪기', tag: '30분 검색 금지', desc: '운영자가 초안 만들고 모임에서 함께 다듬은 시나리오 MD로 직접 깨뜨려본다.' },
-                  { n: '02', step: '배우기', tag: '이론으로 추적', desc: '"왜 깨졌나"를 이론으로 파고든다. 이때 이론이 진짜로 들어온다.' },
-                  { n: '03', step: '해결', tag: '발표 + 블로그', desc: '기술을 적용하고 변화를 측정한다. 글로 굳힌다.' },
-                ].map((s, i) => (
-                  <div key={i} className="bg-white rounded-2xl p-7 border border-line">
-                    <div className="flex items-baseline gap-2.5 mb-1">
-                      <span className="text-sm font-mono text-brand font-bold num">{s.n}</span>
-                      <h3 className="text-xl font-bold tracking-tight">{s.step}</h3>
-                    </div>
-                    <p className="text-xs text-ink-mute font-semibold mb-4">{s.tag}</p>
-                    <p className="text-sm text-ink-soft leading-relaxed">{s.desc}</p>
-                  </div>
-                ))}
+              <div className="mb-12 text-center">
+                <p className="text-xs font-bold text-brand mb-2 tracking-wider uppercase">한 주제의 흐름</p>
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">한 주에 4단계로 깊어진다</h2>
+                <p className="text-sm text-ink-mute mt-3">매주 같은 패턴. 12주 동안 12번 반복.</p>
               </div>
 
-              {/* 시나리오 예시 버튼 */}
+              {/* 메인 시각화: 4단계 stations */}
+              <div className="bg-white rounded-2xl border border-line p-6 md:p-10">
+                {/* 단계 카드 4개 (커넥팅 라인 포함) */}
+                <div className="relative">
+                  {/* 데스크탑: 가로 연결선 */}
+                  <div className="hidden md:block absolute top-7 left-[10%] right-[10%] h-px bg-line"></div>
+                  <div className="hidden md:block absolute top-7 left-[10%] right-[35%] h-px bg-brand"></div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-2 relative">
+                    {[
+                      { n: 's1', step: '겪기', sub: '문제 재현', when: '일~월 작업', whenTag: '월 모임 발표', ex: '쿠폰 100개에 200명 동시 신청 → 105개 발급. race 확인.', required: true },
+                      { n: 's2', step: '확장', sub: '다른 각도', when: '화~수 작업', whenTag: '같은 PR에 커밋', ex: '마감 플래그 추가 → 다른 스레드에서 안 보임. visibility 만남.', required: true },
+                      { n: 's3', step: '해결', sub: '측정 + 풀이', when: '목 직전', whenTag: '목 모임 발표', ex: '스레드 50/100/1000 측정 후 AtomicInteger. 5회 평균 0건.', required: true },
+                      { n: 's4', step: 'Spring 통합', sub: '확장 (선택)', when: '여유 있으면', whenTag: '선택', ex: 'Spring Boot에 올려 Bean 싱글톤 안전성 체감.', required: false },
+                    ].map((s, i) => (
+                      <div key={i} className="flex flex-col items-center text-center">
+                        {/* 원형 뱃지 */}
+                        <div className={`relative z-10 w-14 h-14 rounded-full flex items-center justify-center font-bold mb-4 shadow-sm ${s.required ? 'bg-brand text-white' : 'bg-white text-ink-mute border-2 border-dashed border-line'}`}>
+                          <span className="num font-mono text-sm">{s.n}</span>
+                        </div>
+                        {/* 제목 */}
+                        <h3 className="font-bold text-base mb-0.5">{s.step}</h3>
+                        <p className="text-[11px] text-ink-mute mb-3">{s.sub}</p>
+                        {/* 시간 */}
+                        <div className="w-full bg-bg-alt rounded-lg px-3 py-2 mb-2">
+                          <p className="text-[10px] font-bold text-ink-mute tracking-wider uppercase">언제</p>
+                          <p className="text-xs text-ink-soft mt-0.5 num">{s.when}</p>
+                          <p className="text-[10px] text-brand font-mono mt-0.5">{s.whenTag}</p>
+                        </div>
+                        {/* 1주차 예시 */}
+                        <div className="w-full bg-white rounded-lg px-3 py-2.5 border border-line text-left">
+                          <p className="text-[10px] font-bold text-brand tracking-wider uppercase mb-1">1주차 예시</p>
+                          <p className="text-[11px] text-ink-soft leading-relaxed">{s.ex}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 하단 한 줄 정리 */}
+                <div className="mt-8 pt-6 border-t border-line text-center">
+                  <p className="text-sm text-ink-soft leading-relaxed">
+                    <span className="font-bold text-ink">s1, s2, s3은 필수 · s4는 선택.</span> 한 PR에 모든 단계가 커밋으로 누적된다 — 시도부터 해결까지의 여정이 그대로 git history에 남음.
+                  </p>
+                </div>
+              </div>
+
+              {/* CTA: 시나리오 MD 보기 */}
               <div className="text-center mt-6">
                 <button
                   onClick={() => setScenarioOpen(true)}
                   className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white border border-line text-sm font-semibold text-ink hover:bg-bg-alt hover:border-brand transition shadow-sm"
                 >
                   <I.FileText className="w-4 h-4 text-brand" />
-                  시나리오 MD 예시 보기
+                  실제 시나리오 MD 보기 (1주차)
                 </button>
               </div>
             </div>
@@ -513,114 +544,65 @@
             <div className="max-w-5xl mx-auto px-6">
               <div className="mb-10 text-center">
                 <p className="text-xs font-bold text-brand mb-2 tracking-wider uppercase">레포 작업 흐름</p>
-                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">git clone부터 첫 PR까지</h2>
-                <p className="text-sm text-ink-mute mt-2">멤버가 진짜 자주 보는 건 scenario.md 하나뿐. 나머진 첫날 한 번씩.</p>
-              </div>
-
-              {/* 폴더 구조 */}
-              <div className="bg-bg-alt rounded-2xl p-6 mb-6 border border-line">
-                <p className="text-xs font-bold text-ink-mute tracking-wider uppercase mb-3">폴더 구조 (멤버 시점에서 핵심만)</p>
-                <pre className="text-[12px] leading-relaxed text-ink-soft overflow-x-auto" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace' }}>
-{`cs-study/
-├── README.md                  ← 첫날 5분 (전체 안내)
-├── CONTRIBUTING.md            ← 첫날 10분 (워크플로 한 장)
-├── CLAUDE.md / GEMINI.md      ← AI 도구가 자동으로 읽음 (사람 안 봐도 됨)
-├── docker-compose.yml         ← postgres + redis 한 줄로 띄움
-├── docs/
-│   ├── setup.md               ← 첫날 환경 셋업
-│   ├── workflow.md            ← 한 주 흐름 (적응할 때만)
-│   ├── curriculum.md          ← 12주 한 번 훑어봄
-│   └── measurement-guide.md   ← s3 측정 양식
-├── topics/                    ← ★ 매주 작업하는 곳
-│   ├── 01-jvm-thread/
-│   │   ├── scenario.md        ← ★ 매주 일요일에 읽음
-│   │   └── members/{본인이름}/  ← ★ 여기에 코드 작성
-│   └── ... (12주차)
-└── template/                  ← 4주차+ Spring Boot 자동 셋업 (운영자가 처리)`}
-                </pre>
-              </div>
-
-              {/* Day 0 + 매주 흐름 2컬럼 */}
-              <div className="grid md:grid-cols-2 gap-3 mb-6">
-                <div className="bg-white rounded-2xl p-6 border border-line">
-                  <div className="flex items-center gap-2 mb-3">
-                    <I.Wrench className="w-4 h-4 text-brand" />
-                    <p className="text-xs font-bold text-ink-mute tracking-wider uppercase">Day 0 — 처음 받았을 때 (1번)</p>
-                  </div>
-                  <ol className="space-y-2 text-sm text-ink-soft">
-                    <li className="flex gap-2"><span className="text-brand font-mono text-xs num mt-0.5">1.</span><span><code className="text-[12px] bg-bg-alt px-1.5 py-0.5 rounded font-mono">git clone</code> + README.md 5분</span></li>
-                    <li className="flex gap-2"><span className="text-brand font-mono text-xs num mt-0.5">2.</span><span>CONTRIBUTING.md 정독 10분</span></li>
-                    <li className="flex gap-2"><span className="text-brand font-mono text-xs num mt-0.5">3.</span><span>docs/setup.md 따라 환경 셋업 (Java 21 / Docker / IntelliJ / Claude or Gemini)</span></li>
-                    <li className="flex gap-2"><span className="text-brand font-mono text-xs num mt-0.5">4.</span><span><code className="text-[12px] bg-bg-alt px-1.5 py-0.5 rounded font-mono">docker compose up -d</code> 검증</span></li>
-                    <li className="flex gap-2"><span className="text-emerald-600 font-mono text-xs num mt-0.5">✓</span><span className="font-semibold text-ink">끝. 1주차 시작 대기.</span></li>
-                  </ol>
-                </div>
-
-                <div className="bg-white rounded-2xl p-6 border border-line">
-                  <div className="flex items-center gap-2 mb-3">
-                    <I.GitPullRequest className="w-4 h-4 text-brand" />
-                    <p className="text-xs font-bold text-ink-mute tracking-wider uppercase">매주 흐름 (12번 반복)</p>
-                  </div>
-                  <ol className="space-y-2 text-sm text-ink-soft">
-                    <li className="flex gap-2"><span className="text-ink-mute font-mono text-xs mt-0.5">일</span><span>scenario.md 읽기, 도메인 1개 선택</span></li>
-                    <li className="flex gap-2"><span className="text-ink-mute font-mono text-xs mt-0.5">월 전</span><span>본인 폴더에 s1 코드 → 브랜치 + Draft PR</span></li>
-                    <li className="flex gap-2"><span className="text-brand font-mono text-xs mt-0.5">월</span><span className="font-semibold text-ink">시도 발표 (머지 X)</span></li>
-                    <li className="flex gap-2"><span className="text-ink-mute font-mono text-xs mt-0.5">화~수</span><span>같은 브랜치에 s2 (visibility) 커밋</span></li>
-                    <li className="flex gap-2"><span className="text-ink-mute font-mono text-xs mt-0.5">토</span><span>s3 측정 → PR Ready로 전환</span></li>
-                    <li className="flex gap-2"><span className="text-brand font-mono text-xs mt-0.5">목</span><span className="font-semibold text-ink">해결 발표 → 운영자 머지</span></li>
-                    <li className="flex gap-2"><span className="text-ink-mute font-mono text-xs mt-0.5">일</span><span>본인 폴더에 interview.md 작성</span></li>
-                  </ol>
-                </div>
-              </div>
-
-              {/* MD 빈도 표 */}
-              <div className="bg-white rounded-2xl p-6 border border-line mb-3">
-                <div className="flex items-center gap-2 mb-3">
-                  <I.FileText className="w-4 h-4 text-brand" />
-                  <p className="text-xs font-bold text-ink-mute tracking-wider uppercase">MD 파일 — 멤버가 보는 빈도</p>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="text-left border-b border-line text-ink-mute">
-                        <th className="py-2 font-medium text-xs">파일</th>
-                        <th className="py-2 font-medium text-xs">언제</th>
-                        <th className="py-2 font-medium text-xs text-right">빈도</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-ink-soft">
-                      <tr className="border-b border-line-soft"><td className="py-2 font-mono text-xs">README.md</td><td className="py-2">첫날</td><td className="py-2 text-right num">1번</td></tr>
-                      <tr className="border-b border-line-soft"><td className="py-2 font-mono text-xs">CONTRIBUTING.md</td><td className="py-2">첫날, 가끔 참고</td><td className="py-2 text-right num">1번</td></tr>
-                      <tr className="border-b border-line-soft"><td className="py-2 font-mono text-xs">docs/setup.md</td><td className="py-2">첫날 환경 셋업</td><td className="py-2 text-right num">1번</td></tr>
-                      <tr className="border-b border-line-soft"><td className="py-2 font-mono text-xs">CLAUDE.md / GEMINI.md</td><td className="py-2">AI가 자동으로 읽음</td><td className="py-2 text-right num text-ink-mute">0번</td></tr>
-                      <tr className="border-b border-line-soft bg-brand-faint/40"><td className="py-2 font-mono text-xs text-brand font-semibold">topics/{'{NN}'}/scenario.md</td><td className="py-2 font-semibold text-ink">매주 일요일</td><td className="py-2 text-right num font-bold text-brand">매주</td></tr>
-                      <tr className="border-b border-line-soft"><td className="py-2 font-mono text-xs">docs/measurement-guide.md</td><td className="py-2">s3 단계마다</td><td className="py-2 text-right num">매주</td></tr>
-                      <tr className="border-b border-line-soft"><td className="py-2 font-mono text-xs">docs/workflow.md</td><td className="py-2">첫 주 적응 시</td><td className="py-2 text-right num">1~2번</td></tr>
-                      <tr><td className="py-2 font-mono text-xs">docs/curriculum.md</td><td className="py-2">한 번 훑어봄</td><td className="py-2 text-right num">1번</td></tr>
-                    </tbody>
-                  </table>
-                </div>
-                <p className="text-xs text-ink-mute mt-4 leading-relaxed">
-                  <strong className="text-ink">멤버가 매주 보는 건 scenario.md 하나뿐.</strong> CLAUDE.md/GEMINI.md는 사람이 안 읽음 — Claude Code · Gemini CLI가 자동으로 읽고 행동을 강제 (코드 직답 금지, 3단계 힌트만).
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">매주 보는 파일은 한 개</h2>
+                <p className="text-sm text-ink-mute mt-3">
+                  <code className="text-[12px] bg-bg-alt px-1.5 py-0.5 rounded font-mono border border-line">topics/{'{NN}'}/scenario.md</code>
+                  &nbsp;하나. 나머진 첫날 한 번씩.
                 </p>
               </div>
 
-              {/* 운영자만 신경 쓰는 것 */}
-              <div className="bg-white rounded-2xl p-6 border border-line">
-                <div className="flex items-center gap-2 mb-3">
-                  <I.Users className="w-4 h-4 text-brand" />
-                  <p className="text-xs font-bold text-ink-mute tracking-wider uppercase">운영자(찬혁)만 신경 쓰는 것 (멤버는 무시 OK)</p>
+              {/* 폴더 트리 — 인라인 주석으로 시각화 */}
+              <div className="bg-white rounded-2xl border border-line p-6 md:p-8 mb-6">
+                <p className="text-xs font-bold text-ink-mute tracking-wider uppercase mb-4">폴더 구조</p>
+                <div className="grid grid-cols-[auto_1fr] gap-x-6 md:gap-x-10 text-[12px] md:text-[13px] leading-relaxed" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace' }}>
+                  <span className="text-ink-soft">cs-study/</span><span></span>
+                  <span className="text-ink-soft">├── README.md</span><span className="text-ink-mute text-[11px] self-center">첫날만</span>
+                  <span className="text-ink-soft">├── CONTRIBUTING.md</span><span className="text-ink-mute text-[11px] self-center">첫날만</span>
+                  <span className="text-ink-soft">├── CLAUDE.md / GEMINI.md</span><span className="text-ink-mute text-[11px] self-center">AI 도구가 자동으로 읽음</span>
+                  <span className="text-ink-soft">├── docker-compose.yml</span><span className="text-ink-mute text-[11px] self-center">postgres + redis</span>
+                  <span className="text-ink-soft">├── docs/</span><span className="text-ink-mute text-[11px] self-center">셋업 · 워크플로 · 측정 가이드</span>
+                  <span className="text-ink font-bold">├── topics/</span><span className="text-brand text-[11px] font-semibold self-center">★ 매주 작업 공간</span>
+                  <span className="text-ink">│&nbsp;&nbsp;&nbsp;├── 01-jvm-thread/</span><span></span>
+                  <span className="text-ink font-bold">│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── scenario.md</span><span className="text-brand text-[11px] font-semibold self-center">★ 매주 일요일에 읽음</span>
+                  <span className="text-ink font-bold">│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── members/{'{본인이름}'}/</span><span className="text-brand text-[11px] font-semibold self-center">★ 여기에 코드</span>
+                  <span className="text-ink-soft">│&nbsp;&nbsp;&nbsp;└── ... (12주차)</span><span></span>
+                  <span className="text-ink-soft">└── template/</span><span className="text-ink-mute text-[11px] self-center">운영자가 자동 셋업 (4주차+)</span>
                 </div>
-                <table className="w-full text-sm">
-                  <tbody className="text-ink-soft">
-                    <tr className="border-b border-line-soft"><td className="py-2">다음 3주차 <code className="text-[12px] bg-bg-alt px-1.5 py-0.5 rounded font-mono">scenario.md</code> 작성</td><td className="py-2 text-right text-xs text-ink-mute num">3주마다 · 4번</td></tr>
-                    <tr className="border-b border-line-soft"><td className="py-2"><code className="text-[12px] bg-bg-alt px-1.5 py-0.5 rounded font-mono">template/build.gradle</code> 의존성 갱신</td><td className="py-2 text-right text-xs text-ink-mute num">페이즈 시작 시</td></tr>
-                    <tr className="border-b border-line-soft"><td className="py-2"><code className="text-[12px] bg-bg-alt px-1.5 py-0.5 rounded font-mono">./scripts/scaffold-week.sh {'{NN}'}</code> 실행 → 7명 폴더 자동 채움</td><td className="py-2 text-right text-xs text-ink-mute num">페이즈 시작 시</td></tr>
-                    <tr><td className="py-2">CLAUDE.md 수정 후 <code className="text-[12px] bg-bg-alt px-1.5 py-0.5 rounded font-mono">./scripts/sync-ai-rules.sh</code></td><td className="py-2 text-right text-xs text-ink-mute num">룰 변경 시만</td></tr>
-                  </tbody>
-                </table>
-                <p className="text-xs text-ink-mute mt-4 leading-relaxed">
-                  4주차+ Spring Boot 폴더는 <strong className="text-ink">운영자가 페이즈 시작 직전에 자동 셋업</strong>해둠. 멤버는 본인 폴더 cd해서 IntelliJ로 ▶ 누르면 끝 — 포트/스키마는 자동으로 본인 거가 박혀있음.
+              </div>
+
+              {/* Day 0 vs 매주 — 2 컬럼 단순 */}
+              <div className="grid md:grid-cols-2 gap-3">
+                <div className="bg-white rounded-2xl p-6 border border-line">
+                  <p className="text-[11px] font-bold text-ink-mute tracking-wider uppercase mb-1">한 번만</p>
+                  <h3 className="font-bold text-base mb-4">처음 받았을 때 (Day 0)</h3>
+                  <ol className="space-y-3 text-sm text-ink-soft">
+                    <li className="flex gap-3"><span className="num font-mono text-brand text-xs mt-0.5">1</span><span><code className="text-[12px] bg-bg-alt px-1.5 py-0.5 rounded font-mono">git clone</code> + README 5분</span></li>
+                    <li className="flex gap-3"><span className="num font-mono text-brand text-xs mt-0.5">2</span><span>CONTRIBUTING 10분</span></li>
+                    <li className="flex gap-3"><span className="num font-mono text-brand text-xs mt-0.5">3</span><span>setup.md 따라 환경 셋업</span></li>
+                    <li className="flex gap-3"><span className="num font-mono text-brand text-xs mt-0.5">4</span><span><code className="text-[12px] bg-bg-alt px-1.5 py-0.5 rounded font-mono">docker compose up -d</code></span></li>
+                  </ol>
+                  <p className="text-xs text-ink-mute mt-5 pt-4 border-t border-line-soft">→ 끝. 1주차 시작 대기.</p>
+                </div>
+
+                <div className="bg-white rounded-2xl p-6 border border-line">
+                  <p className="text-[11px] font-bold text-ink-mute tracking-wider uppercase mb-1">12번 반복</p>
+                  <h3 className="font-bold text-base mb-4">매주 사이클</h3>
+                  <ol className="space-y-3 text-sm text-ink-soft">
+                    <li className="flex gap-3"><span className="num font-mono text-brand text-xs mt-0.5 w-6">日</span><span>scenario.md 읽기</span></li>
+                    <li className="flex gap-3"><span className="num font-mono text-brand text-xs mt-0.5 w-6">月</span><span>s1 → Draft PR → 발표</span></li>
+                    <li className="flex gap-3"><span className="num font-mono text-ink-mute text-xs mt-0.5 w-6">水</span><span>s2 커밋</span></li>
+                    <li className="flex gap-3"><span className="num font-mono text-ink-mute text-xs mt-0.5 w-6">土</span><span>s3 측정 → PR Ready</span></li>
+                    <li className="flex gap-3"><span className="num font-mono text-brand text-xs mt-0.5 w-6">木</span><span>해결 발표 → 머지</span></li>
+                  </ol>
+                  <p className="text-xs text-ink-mute mt-5 pt-4 border-t border-line-soft">CLAUDE.md / GEMINI.md는 AI가 자동으로 읽음 — 사람은 안 봐도 됨.</p>
+                </div>
+              </div>
+
+              {/* 한 줄 인사이트 */}
+              <div className="text-center mt-8 px-6">
+                <p className="text-base text-ink-soft leading-relaxed">
+                  4주차부터 Spring Boot 폴더는 <strong className="text-ink">운영자가 페이즈 시작 직전에 자동 셋업</strong> —
+                  멤버는 본인 폴더 cd해서 IntelliJ로 ▶ 누르면 끝.
                 </p>
               </div>
             </div>
