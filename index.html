@@ -188,33 +188,6 @@
               q: '로그 레벨 기준 / 분산 트레이싱 왜 필요 / 메트릭/로그/트레이스 차이' },
           ]
         },
-        {
-          n: '5', weeks: '13–17주', wkCount: 5, title: '시스템 디자인 + 통합 프로젝트', cycle: '확장 사이클',
-          tlBg: 'bg-emerald-500 text-white',
-          why: '시스템 디자인 워크숍과 모의면접으로 마무리. 통합 프로젝트(14~16주)는 멤버 협의 후 결정 (미정).',
-          topics: [
-            { w: '13주', t: '시스템 디자인 워크숍', hidden: true,
-              goal: 'URL 단축기 · 채팅 · 주문 시스템 화이트보드 모의 설계',
-              cs: '스케일링, CDN, 로드밸런싱, 메시지 큐, NoSQL',
-              q: '트위터 타임라인 설계 / 단축 URL 설계 / 주문 시스템 설계' },
-            { w: '14주', t: '통합 ① 매핑 워크숍 (미정)',
-              goal: '본인 부캠 프로젝트 가져와서 12주제 중 5~6개 적용 가능한 것 매핑 · 운영진 검토',
-              cs: '도메인 분석, 토픽-기능 매핑, 우선순위 결정',
-              q: '내 프로젝트의 어디에 락이 필요한가 / 적용 우선순위 / 예상 통증' },
-            { w: '15주', t: '통합 ② 구현 + 측정 (미정)',
-              goal: '본인 프로젝트에 5~6개 토픽 실제 적용 + k6/JMeter 부하 테스트',
-              cs: '실전 트레이드오프, 측정 기반 의사결정',
-              q: '왜 이 기술 선택 / 다른 선택지 / 측정 결과 (TPS · 응답시간)' },
-            { w: '16주', t: '통합 ③ 비교 발표 (미정)',
-              goal: '7명이 "내 프로젝트에 X 적용한 사례" 발표 (1인 15분) + 면접 답변 카드 작성',
-              cs: '같은 토픽 다른 도메인 비교, 트레이드오프 회고',
-              q: '우리 멤버는 분산락 썼는데 나는 왜 비관적 락? / 비교 답변 훈련' },
-            { w: '17주', t: '모의면접 + 회고',
-              goal: '7명 페어 매칭 모의면접 · 답변 카드 정리 · 회고',
-              cs: '면접 답변 구조화, 30초 압축',
-              q: '실전 시뮬레이션 (CS + 시스템 디자인 + 인성)' },
-          ]
-        },
       ];
 
       return (
@@ -252,7 +225,7 @@
                 통증을 직접 겪은 사람만 진짜 강점이 됩니다.
               </p>
               <div className="flex flex-wrap gap-x-8 gap-y-3 text-sm">
-                <div><span className="block text-3xl font-bold text-ink num leading-none mb-1">17<span className="text-base text-ink-mute font-medium ml-0.5">주</span></span><span className="text-ink-mute">약 4개월</span></div>
+                <div><span className="block text-3xl font-bold text-ink num leading-none mb-1">12<span className="text-base text-ink-mute font-medium ml-0.5">주</span></span><span className="text-ink-mute">약 3개월</span></div>
                 <div><span className="block text-3xl font-bold text-ink num leading-none mb-1">12</span><span className="text-ink-mute">핵심 주제 + 시스템 디자인</span></div>
                 <div><span className="block text-3xl font-bold text-ink num leading-none mb-1">7<span className="text-base text-ink-mute font-medium ml-0.5">명</span></span><span className="text-ink-mute">한 자리 한 사람</span></div>
                 <div><span className="block text-3xl font-bold text-ink num leading-none mb-1">4<span className="text-base text-ink-mute font-medium ml-0.5">시간 / 주</span></span><span className="text-ink-mute">매주 2회 (월/목)</span></div>
@@ -264,13 +237,14 @@
           <section id="cycle" className="py-20 md:py-24 border-b border-line">
             <div className="max-w-5xl mx-auto px-6">
               <div className="mb-10 text-center">
-                <p className="text-xs font-bold text-brand mb-2 tracking-wider uppercase">한 주제, 세 단계</p>
+                <p className="text-xs font-bold text-brand mb-2 tracking-wider uppercase">한 주제, 네 단계</p>
                 <h2 className="text-2xl md:text-3xl font-bold tracking-tight">모든 주제는 같은 사이클로</h2>
               </div>
-              <div className="grid md:grid-cols-3 gap-3">
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-3">
                 {[
-                  { n: '01', step: '겪기', tag: '시나리오 MD · 30분 검색 금지', desc: '운영자가 초안 만들고 모임에서 함께 다듬은 시나리오 MD로 직접 깨뜨려본다.' },
-                  { n: '02', step: '배우기', tag: '이론으로 추적', desc: '"왜 깨졌나"를 이론으로 파고든다. 이때 이론이 들어온다.' },
+                  { n: '00', step: '개념 숙지', tag: 'AI 대화 + 자기 발화', desc: '필수 개념을 AI와 대화하며 숙지. 입으로 막힘 없이 설명 가능해야 다음 단계로.' },
+                  { n: '01', step: '겪기', tag: '30분 검색 금지', desc: '운영자가 초안 만들고 모임에서 함께 다듬은 시나리오 MD로 직접 깨뜨려본다.' },
+                  { n: '02', step: '배우기', tag: '이론으로 추적', desc: '"왜 깨졌나"를 이론으로 파고든다. 이때 이론이 진짜로 들어온다.' },
                   { n: '03', step: '해결', tag: '발표 + 블로그', desc: '기술을 적용하고 변화를 측정한다. 글로 굳힌다.' },
                 ].map((s, i) => (
                   <div key={i} className="bg-white rounded-2xl p-7 border border-line">
@@ -302,13 +276,13 @@
             <div className="max-w-5xl mx-auto px-6">
               <div className="mb-10 text-center">
                 <p className="text-xs font-bold text-brand mb-2 tracking-wider uppercase">커리큘럼</p>
-                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">17주 · 5 페이즈 · 12 주제 + 통합</h2>
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">12주 · 4 페이즈 · 12 주제</h2>
                 <p className="text-sm text-ink-mute mt-3">매주 1주제 · 모임 2회 (월 시도 발표 / 목 해결 발표)</p>
               </div>
 
               {/* Timeline visual */}
               <div className="bg-white rounded-2xl border border-line p-5 md:p-6 mb-6">
-                <p className="text-xs font-bold text-ink-mute tracking-wider uppercase mb-3">17주 비중</p>
+                <p className="text-xs font-bold text-ink-mute tracking-wider uppercase mb-3">12주 비중</p>
                 <div className="flex items-stretch h-12 rounded-lg overflow-hidden border border-line">
                   {phases.map((p, i) => (
                     <div key={i} className={`${p.tlBg} flex flex-col items-center justify-center px-1 border-r border-white/30 last:border-r-0`} style={{ flexGrow: p.wkCount }}>
@@ -318,7 +292,7 @@
                   ))}
                 </div>
                 <div className="flex justify-between text-[10px] num font-mono text-ink-mute mt-2 px-0.5">
-                  <span>1주</span><span>3주</span><span>6주</span><span>9주</span><span>12주</span><span>17주</span>
+                  <span>1주</span><span>3주</span><span>6주</span><span>9주</span><span>12주</span>
                 </div>
               </div>
 
