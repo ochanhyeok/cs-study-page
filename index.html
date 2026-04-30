@@ -684,12 +684,12 @@
               onClick={() => setScenarioOpen(false)}
             >
               <div
-                className="bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden shadow-2xl flex flex-col"
+                className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden shadow-2xl flex flex-col"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex items-center justify-between px-6 py-4 border-b border-line flex-shrink-0">
                   <div>
-                    <p className="text-[11px] font-bold text-brand tracking-wider uppercase mb-0.5">시나리오 MD 예시</p>
+                    <p className="text-xs font-bold text-brand tracking-wider uppercase mb-0.5">포용적 시나리오 MD</p>
                     <h3 className="font-bold text-lg">1주차 — JVM 메모리 모델 & 스레드</h3>
                   </div>
                   <button
@@ -702,92 +702,148 @@
                 </div>
                 <div className="overflow-y-auto p-6">
                   <pre className="bg-bg-alt rounded-lg p-5 text-[12px] leading-relaxed text-ink-soft whitespace-pre-wrap" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace' }}>
-{`# 01. JVM 메모리 모델 & 스레드 — 겪기 시나리오
+{`# 01. JVM 메모리 모델 & 스레드 — 시나리오
+
+이번 주제: 멀티스레드 환경에서 공유 자원이 망가지는 경험.
+도메인은 본인 선택. 패턴은 모두 동일.
+
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 0. 개념 숙지 (코딩 시작 전 필수)
+STEP 0. 개념 숙지 (도메인 무관, 모두 동일)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ## 필수 개념 (AI와 대화하며 숙지)
-1. 프로세스 vs 스레드
-2. JVM 메모리 영역 5가지
-3. 스레드 안전 (thread-safe)
-4. atomic operation
-5. 컨텍스트 스위칭
+1. 프로세스 vs 스레드 (메모리 공유 관점)
+2. JVM 메모리 영역 5가지 (Heap, Stack 등)
+3. race condition / atomicity / visibility
+4. 컨텍스트 스위칭
 
-## 자기 검증 (다음 STEP 통과 기준)
-다음 5개를 "입으로 막힘 없이" 설명 가능해야 STEP 1 시작:
-
-[ ] 프로세스 vs 스레드 차이 (메모리 공유 관점)
-[ ] JVM 메모리 영역 5개 + 어디가 공유, 어디가 스레드별
-[ ] 스레드 안전이란 (race condition 예시 1개)
+## 자기 검증 (입으로 답할 수 있어야 STEP 1 시작)
+[ ] 프로세스 vs 스레드 차이
+[ ] JVM 메모리 영역 5개 + 어디가 공유 / 어디가 스레드별
+[ ] race condition + 예시 1개
 [ ] count++가 한 번에 일어나는가
-[ ] 단일 스레드는 왜 race condition이 안 일어나는가
+[ ] 단일 스레드는 왜 race가 없는가
+[ ] atomicity vs visibility 차이
+
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 1. 도메인 선택
+STEP 1. 본인 도메인 선택
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-같은 개념(race condition), 다른 도메인.
-끌리는 거 1개 선택 (또는 본인 부캠 프로젝트):
+같은 race condition, 다른 도메인. 1개 선택 (또는 본인 부캠 도메인):
 
-- 은행 잔고 (잔고 음수)
-- 티켓팅 (좌석 중복 판매)
-- 선착순 쿠폰 (초과 발급)
-- 재고 관리 (1개 남았는데 두 명 결제)
-- 좋아요 카운터 (누락)
-- 포인트 적립 (중복 적립)
-- 본인 부캠 프로젝트 도메인 (자유)
+- 선착순 쿠폰   → 통증: 100개인데 105개 발급
+- 콘서트 좌석   → 통증: 같은 좌석 두 명에게 팔림
+- 재고 관리     → 통증: 1개 남았는데 두 명 결제 성공
+- 출퇴근 기록   → 통증: 도장 두 번 찍힘 / 시각 덮어씀
+- 좋아요 카운트 → 통증: 100명 눌렀는데 80만 카운트
+- 이중 환불     → 통증: 한 결제에 환불 두 번 처리
+- (volatile)    → 통증: 마감 플래그가 다른 스레드에 안 보임
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 2. 통증 정의 (본인 도메인 1줄)
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-예) 티켓팅 도메인 선택 시:
-"공연 좌석 100개. 동시 매수 200건.
-같은 좌석이 두 명에게 팔리면 안 됨."
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 3. 환경
+STEP 2. 코드 패턴 (도메인 무관, 변수명만 다름)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+## 공통 패턴
+
+\`\`\`java
+public class [도메인명] {
+    private int [공유자원] = 100;     // 잔고/좌석/쿠폰/...
+
+    public boolean [동작]() {
+        if ([공유자원] > 0) {           // ← race
+            [공유자원]--;                // ← act
+            return true;
+        }
+        return false;
+    }
+}
+\`\`\`
+
+## 도메인별 변수 매핑 (본인 거 골라서 변환)
+
+도메인          | 클래스명         | 변수명             | 메서드
+선착순 쿠폰     | CouponEvent      | availableCoupons   | claim()
+콘서트 좌석     | ConcertBooking   | availableSeats     | reserve()
+재고 관리       | StockManager     | stock              | purchase()
+출퇴근          | Attendance       | checkedIn (bool)   | checkIn()
+좋아요          | LikeCounter      | count              | like()
+이중 환불       | RefundService    | refunded (bool)    | refund()
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 3. 멀티 스레드 실행 (모두 동일)
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+\`\`\`java
+ExecutorService executor = Executors.newFixedThreadPool(50);
+AtomicInteger successCount = new AtomicInteger(0);
+
+for (int i = 0; i < 200; i++) {
+    executor.submit(() -> {
+        if (instance.[동작]()) {
+            successCount.incrementAndGet();
+        }
+    });
+}
+
+executor.shutdown();
+executor.awaitTermination(10, TimeUnit.SECONDS);
+
+System.out.println("기대: 100 / 실제: " + successCount.get());
+System.out.println("[공유자원]: " + instance.[공유자원]);
+\`\`\`
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+환경
+━━━━━━━━━━━━━━━━━━━━━━━━━━
 - Java 17
-- Spring Boot 3.x (선택)
-- 부하: ExecutorService (Thread Pool)
+- Spring Boot 안 띄움 (main 메서드만)
+- 부하: ExecutorService
+
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 4. 출발 코드 (본인 도메인 기반)
+STAGE 진행 가이드
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-본인 도메인에 맞게 직접 작성:
-- 공유 자원 변수 1개 (잔고/좌석/쿠폰/...)
-- 멀티 스레드로 그 변수 변경
-- 락/atomic/volatile 없이
+[월 PR 마감: 토 23:59]
+STAGE 1 — 위 패턴으로 race condition 재현 (필수)
+STAGE 2 — 같은 클래스에 마감 flag 추가 → visibility 마주침 (필수)
+
+[목 PR 마감: 화 23:59]
+STAGE 3 — 측정 + 분해 + 락/atomic 적용 (필수)
+
+[선택]
+STAGE 4 — Spring 통합 (Bean 안전성 체감)
+
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 금지 (30분 검색 금지)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-
 - synchronized, ReentrantLock, @Lock
 - AtomicInteger, AtomicLong, LongAdder
 - volatile
 - java.util.concurrent.locks.*
 
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 측정 포인트
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-
 - 도메인 통증 발생 횟수 (음수 / 중복 / 누락)
-- 1000번 시도 중 몇 번 발생하는지
+- 1000번 시도 중 몇 번 발생
 - 스레드 수 변화 비교 (10 / 50 / 100 / 1000)
+- 단일 스레드 vs 멀티 스레드 비교
+
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-시도하면 좋은 것 (선택)
+막힐 때
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-- 단일 스레드로 돌려보기 → 안 깨짐 확인
-- Thread.sleep(1) 넣어보기 → 깨짐 확률 변화
-- ThreadLocal로 분리 → 결과 깨끗해지나?`}
+1. 30분 직접 시도 (CLAUDE.md 룰)
+2. AI에 물어보기 (답 안 주고 힌트만 줌)
+3. 디스코드 #질문 채널`}
                   </pre>
                 </div>
                 <div className="px-6 py-4 border-t border-line flex-shrink-0 bg-bg-alt">
