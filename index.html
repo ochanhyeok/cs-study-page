@@ -15,7 +15,7 @@
         extend: {
           fontFamily: { sans: ['Pretendard Variable','Pretendard','system-ui','-apple-system','sans-serif'] },
           colors: {
-            ink: '#191f28', 'ink-soft': '#4e5968', 'ink-mute': '#8b95a1',
+            ink: '#0f1419', 'ink-soft': '#3d4651', 'ink-mute': '#5e6873',
             line: '#e5e8eb', 'line-soft': '#f2f4f6',
             'bg-base': '#ffffff', 'bg-alt': '#f9fafb',
             brand: '#3182f6', 'brand-hover': '#1b64da', 'brand-faint': '#e8f3ff',
@@ -196,7 +196,7 @@
           <header className="sticky top-0 z-40 backdrop-blur-md bg-white/85 border-b border-line">
             <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-md bg-brand flex items-center justify-center text-white font-bold text-[11px]">CS</div>
+                <div className="w-7 h-7 rounded-md bg-brand flex items-center justify-center text-white font-bold text-xs">CS</div>
                 <span className="font-bold text-sm tracking-tight">CS Study</span>
               </div>
               <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-ink-soft">
@@ -215,18 +215,15 @@
                 <span className="w-1.5 h-1.5 rounded-full bg-brand animate-pulse"></span>
                 7명 · 곧 시작
               </div>
-              <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.1] mb-6">
-                20주 동안<br/>
-                <span className="gradient-text">직접 깨뜨리고 풀어내는</span><br/>
-                CS 스터디
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight leading-[1.2] mb-4">
+                12주 동안 <span className="gradient-text">직접 깨뜨리고 풀어내는</span> CS 스터디
               </h1>
-              <p className="text-lg md:text-xl text-ink-soft mb-10 max-w-xl leading-relaxed">
-                책으로 외운 답변은 면접관이 한 마디로 알아챕니다.<br/>
-                통증을 직접 겪은 사람만 진짜 강점이 됩니다.
+              <p className="text-base md:text-lg text-ink-soft mb-8 max-w-xl leading-relaxed">
+                책으로 외운 답변은 면접관이 한 마디로 알아챕니다. 통증을 직접 겪은 사람만 진짜 강점이 됩니다.
               </p>
               <div className="flex flex-wrap gap-x-8 gap-y-3 text-sm">
                 <div><span className="block text-3xl font-bold text-ink num leading-none mb-1">12<span className="text-base text-ink-mute font-medium ml-0.5">주</span></span><span className="text-ink-mute">약 3개월</span></div>
-                <div><span className="block text-3xl font-bold text-ink num leading-none mb-1">12</span><span className="text-ink-mute">핵심 주제 + 시스템 디자인</span></div>
+                <div><span className="block text-3xl font-bold text-ink num leading-none mb-1">12</span><span className="text-ink-mute">핵심 주제</span></div>
                 <div><span className="block text-3xl font-bold text-ink num leading-none mb-1">7<span className="text-base text-ink-mute font-medium ml-0.5">명</span></span><span className="text-ink-mute">한 자리 한 사람</span></div>
                 <div><span className="block text-3xl font-bold text-ink num leading-none mb-1">4<span className="text-base text-ink-mute font-medium ml-0.5">시간 / 주</span></span><span className="text-ink-mute">매주 2회 (월/목)</span></div>
               </div>
@@ -286,12 +283,12 @@
                 <div className="flex items-stretch h-12 rounded-lg overflow-hidden border border-line">
                   {phases.map((p, i) => (
                     <div key={i} className={`${p.tlBg} flex flex-col items-center justify-center px-1 border-r border-white/30 last:border-r-0`} style={{ flexGrow: p.wkCount }}>
-                      <p className="text-[11px] font-bold leading-none">P{p.n}</p>
-                      <p className="text-[9px] num font-mono opacity-80 mt-0.5">{p.wkCount}주</p>
+                      <p className="text-xs font-bold leading-none">P{p.n}</p>
+                      <p className="text-[10px] num font-mono opacity-80 mt-0.5">{p.wkCount}주</p>
                     </div>
                   ))}
                 </div>
-                <div className="flex justify-between text-[10px] num font-mono text-ink-mute mt-2 px-0.5">
+                <div className="flex justify-between text-[11px] num font-mono text-ink-mute mt-2 px-0.5">
                   <span>1주</span><span>3주</span><span>6주</span><span>9주</span><span>12주</span>
                 </div>
               </div>
@@ -308,7 +305,7 @@
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-1">
-                            <p className="text-[10px] font-bold text-ink-mute tracking-wider uppercase num">PHASE {p.n}</p>
+                            <p className="text-[11px] font-bold text-ink-mute tracking-wider uppercase num">PHASE {p.n}</p>
                             <span className="text-xs num font-mono text-ink-mute">{p.weeks} · {p.cycle}</span>
                           </div>
                           <h3 className="text-lg font-bold tracking-tight mb-1.5">{p.title}</h3>
@@ -322,21 +319,21 @@
                       {p.topics.filter(t => !t.hidden).map((t, j) => (
                         <div key={j} className="bg-white rounded-2xl border border-line p-5 flex flex-col">
                           <div className="flex items-center justify-between mb-3 pb-3 border-b border-line-soft">
-                            <span className="text-[10px] num font-mono text-ink-mute bg-bg-alt px-2 py-0.5 rounded">{t.w}</span>
-                            <span className="text-[10px] num font-mono text-ink-mute">#{(i*3) + j + 1 - (i > 0 ? 0 : 0)}</span>
+                            <span className="text-[11px] num font-mono text-ink-mute bg-bg-alt px-2 py-0.5 rounded">{t.w}</span>
+                            <span className="text-[11px] num font-mono text-ink-mute">#{(i*3) + j + 1 - (i > 0 ? 0 : 0)}</span>
                           </div>
                           <h4 className="font-bold mb-4 leading-snug">{t.t}</h4>
                           <div className="space-y-3 flex-1">
                             <div>
-                              <p className="text-[10px] font-bold text-brand tracking-wider uppercase mb-1">학습 목표</p>
+                              <p className="text-[11px] font-bold text-brand tracking-wider uppercase mb-1">학습 목표</p>
                               <p className="text-xs text-ink-soft leading-relaxed">{t.goal}</p>
                             </div>
                             <div>
-                              <p className="text-[10px] font-bold text-amber-600 tracking-wider uppercase mb-1">겪기에서 만나는 CS</p>
+                              <p className="text-[11px] font-bold text-amber-600 tracking-wider uppercase mb-1">겪기에서 만나는 CS</p>
                               <p className="text-xs text-ink-soft leading-relaxed">{t.cs}</p>
                             </div>
                             <div>
-                              <p className="text-[10px] font-bold text-emerald-600 tracking-wider uppercase mb-1">면접 단골 질문</p>
+                              <p className="text-[11px] font-bold text-emerald-600 tracking-wider uppercase mb-1">면접 단골 질문</p>
                               <p className="text-xs text-ink-soft leading-relaxed">{t.q}</p>
                             </div>
                           </div>
@@ -373,38 +370,38 @@
 
                 {/* 단계 아이콘 row */}
                 <div className="flex items-stretch h-7 mb-1.5">
-                  <div className="flex items-center justify-center bg-red-50 text-red-700 text-[10px] font-bold rounded-t border-t border-l border-r border-red-100" style={{flexGrow: 3}}>01 겪기</div>
+                  <div className="flex items-center justify-center bg-red-50 text-red-700 text-[11px] font-bold rounded-t border-t border-l border-r border-red-100" style={{flexGrow: 3}}>01 겪기</div>
                   <div style={{flexGrow: 1.2}}></div>
-                  <div className="flex items-center justify-center bg-amber-50 text-amber-700 text-[10px] font-bold rounded-t border-t border-l border-r border-amber-100" style={{flexGrow: 2}}>02 배우기 → 03 해결</div>
+                  <div className="flex items-center justify-center bg-amber-50 text-amber-700 text-[11px] font-bold rounded-t border-t border-l border-r border-amber-100" style={{flexGrow: 2}}>02 배우기 → 03 해결</div>
                   <div style={{flexGrow: 1.2}}></div>
                 </div>
 
                 {/* 메인 타임라인 - 큰 바 */}
                 <div className="flex items-stretch h-24 rounded-xl overflow-hidden border border-line mb-2 shadow-sm">
                   <div className="bg-red-100 text-red-900 flex flex-col items-center justify-center px-2 border-r border-white" style={{flexGrow: 3}}>
-                    <span className="text-[9px] font-mono opacity-60">집 · 금~일</span>
+                    <span className="text-[10px] font-mono opacity-60">집 · 금~일</span>
                     <p className="text-sm font-bold mt-0.5">시나리오 받고 깨뜨려보기</p>
-                    <p className="text-[10px] opacity-70 mt-0.5">3일</p>
+                    <p className="text-[11px] opacity-70 mt-0.5">3일</p>
                   </div>
                   <div className="bg-amber-500 text-white flex flex-col items-center justify-center px-1 border-r border-white/30" style={{flexGrow: 1.2}}>
-                    <span className="text-[9px] font-mono opacity-80">월 모임</span>
+                    <span className="text-[10px] font-mono opacity-80">월 모임</span>
                     <p className="text-sm font-bold mt-0.5 leading-tight text-center">시도 발표</p>
-                    <p className="text-[10px] opacity-90 mt-0.5">2시간</p>
+                    <p className="text-[11px] opacity-90 mt-0.5">2시간</p>
                   </div>
                   <div className="bg-amber-100 text-amber-900 flex flex-col items-center justify-center px-2 border-r border-white" style={{flexGrow: 2}}>
-                    <span className="text-[9px] font-mono opacity-60">집 · 화~수</span>
+                    <span className="text-[10px] font-mono opacity-60">집 · 화~수</span>
                     <p className="text-sm font-bold mt-0.5">이론 + 해결 + PR</p>
-                    <p className="text-[10px] opacity-70 mt-0.5">2일</p>
+                    <p className="text-[11px] opacity-70 mt-0.5">2일</p>
                   </div>
                   <div className="bg-brand text-white flex flex-col items-center justify-center px-1" style={{flexGrow: 1.2}}>
-                    <span className="text-[9px] font-mono opacity-80">목 모임</span>
+                    <span className="text-[10px] font-mono opacity-80">목 모임</span>
                     <p className="text-sm font-bold mt-0.5 leading-tight text-center">해결 발표</p>
-                    <p className="text-[10px] opacity-90 mt-0.5">2시간</p>
+                    <p className="text-[11px] opacity-90 mt-0.5">2시간</p>
                   </div>
                 </div>
 
                 {/* Day markers */}
-                <div className="flex text-[10px] num font-mono text-ink-mute mb-5">
+                <div className="flex text-[11px] num font-mono text-ink-mute mb-5">
                   <div className="text-left" style={{flexGrow: 3}}>이전 목 · 시나리오 공개</div>
                   <div className="text-center" style={{flexGrow: 1.2}}>월 · 시도</div>
                   <div className="text-center" style={{flexGrow: 2}}>화 · PR 마감</div>
@@ -433,7 +430,7 @@
                 <div className="flex items-center gap-2.5 mb-4">
                   <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-sm">월</div>
                   <div>
-                    <p className="text-[10px] font-bold text-ink-mute tracking-wider uppercase">월 모임</p>
+                    <p className="text-[11px] font-bold text-ink-mute tracking-wider uppercase">월 모임</p>
                     <h3 className="font-bold text-sm">시도 발표 — "어떻게 부딪혔나"</h3>
                   </div>
                 </div>
@@ -445,12 +442,12 @@
                     { label: '다음 시도 방향 회의', min: 20, color: 'bg-emerald-100 text-emerald-800' },
                   ].map((b, i) => (
                     <div key={i} className={`${b.color} flex flex-col items-center justify-center px-2 border-r border-white/20 last:border-r-0`} style={{ flexGrow: b.min }}>
-                      <p className="text-[11px] font-bold leading-none whitespace-nowrap">{b.label}</p>
-                      <p className="text-[10px] num font-mono opacity-80 mt-0.5">{b.min}분</p>
+                      <p className="text-xs font-bold leading-none whitespace-nowrap">{b.label}</p>
+                      <p className="text-[11px] num font-mono opacity-80 mt-0.5">{b.min}분</p>
                     </div>
                   ))}
                 </div>
-                <p className="text-[11px] text-ink-mute mt-3">PR 마감: 토 23:59 (모임 48h 전) · 본인이 부딪혀본 코드 + 시도한 방법 공유</p>
+                <p className="text-xs text-ink-mute mt-3">PR 마감: 토 23:59 (모임 48h 전) · 본인이 부딪혀본 코드 + 시도한 방법 공유</p>
               </div>
 
               {/* 목 모임 timeline */}
@@ -458,7 +455,7 @@
                 <div className="flex items-center gap-2.5 mb-4">
                   <div className="w-8 h-8 rounded-lg bg-brand-faint text-brand flex items-center justify-center font-bold text-sm">목</div>
                   <div>
-                    <p className="text-[10px] font-bold text-ink-mute tracking-wider uppercase">목 모임</p>
+                    <p className="text-[11px] font-bold text-ink-mute tracking-wider uppercase">목 모임</p>
                     <h3 className="font-bold text-sm">해결 발표 — "어떻게 풀었고 이론은 이거다"</h3>
                   </div>
                 </div>
@@ -470,12 +467,12 @@
                     { label: '회고 + 다음 시나리오 공개', min: 20, color: 'bg-emerald-100 text-emerald-800' },
                   ].map((b, i) => (
                     <div key={i} className={`${b.color} flex flex-col items-center justify-center px-2 border-r border-white/20 last:border-r-0`} style={{ flexGrow: b.min }}>
-                      <p className="text-[11px] font-bold leading-none whitespace-nowrap">{b.label}</p>
-                      <p className="text-[10px] num font-mono opacity-80 mt-0.5">{b.min}분</p>
+                      <p className="text-xs font-bold leading-none whitespace-nowrap">{b.label}</p>
+                      <p className="text-[11px] num font-mono opacity-80 mt-0.5">{b.min}분</p>
                     </div>
                   ))}
                 </div>
-                <p className="text-[11px] text-ink-mute mt-3">PR 마감: 화 23:59 (모임 48h 전) · 모임 끝에 다음 주 시나리오 공개 + 학습 방향 회의</p>
+                <p className="text-xs text-ink-mute mt-3">PR 마감: 화 23:59 (모임 48h 전) · 모임 끝에 다음 주 시나리오 공개 + 학습 방향 회의</p>
               </div>
 
               {/* 두 모임 발표 차이 */}
@@ -491,13 +488,13 @@
                   ].map((r, i) => (
                     <div key={i} className={`rounded-xl p-5 ${r.bg} border`}>
                       <div className="flex items-center gap-2 mb-3">
-                        <span className={`inline-block text-[11px] font-bold px-2 py-0.5 rounded ${r.tagBg}`}>{r.day}</span>
+                        <span className={`inline-block text-xs font-bold px-2 py-0.5 rounded ${r.tagBg}`}>{r.day}</span>
                         <p className="font-bold text-sm">{r.t}</p>
                       </div>
                       <p className="text-xs text-ink-soft leading-relaxed mb-3">{r.d}</p>
                       <ul className="space-y-1.5">
                         {r.items.map((it, j) => (
-                          <li key={j} className="flex items-start gap-1.5 text-[11px] text-ink-soft leading-relaxed">
+                          <li key={j} className="flex items-start gap-1.5 text-xs text-ink-soft leading-relaxed">
                             <I.Check className="w-3 h-3 text-brand mt-0.5 flex-shrink-0" />
                             <span>{it}</span>
                           </li>
@@ -569,19 +566,19 @@
                 </p>
                 <div className="grid sm:grid-cols-3 gap-2">
                   <div className="p-3 rounded-lg bg-bg-alt border border-line-soft">
-                    <p className="text-[10px] font-bold text-brand mb-1 tracking-wider uppercase">1차 힌트</p>
+                    <p className="text-[11px] font-bold text-brand mb-1 tracking-wider uppercase">1차 힌트</p>
                     <p className="text-xs font-semibold text-ink mb-0.5">방향만 제시</p>
-                    <p className="text-[11px] text-ink-mute leading-relaxed">"동시성 문제일 가능성이 있어"</p>
+                    <p className="text-xs text-ink-mute leading-relaxed">"동시성 문제일 가능성이 있어"</p>
                   </div>
                   <div className="p-3 rounded-lg bg-bg-alt border border-line-soft">
-                    <p className="text-[10px] font-bold text-amber-600 mb-1 tracking-wider uppercase">2차 힌트</p>
+                    <p className="text-[11px] font-bold text-amber-600 mb-1 tracking-wider uppercase">2차 힌트</p>
                     <p className="text-xs font-semibold text-ink mb-0.5">키워드만</p>
-                    <p className="text-[11px] text-ink-mute leading-relaxed">"JMM happens-before 찾아봐"</p>
+                    <p className="text-xs text-ink-mute leading-relaxed">"JMM happens-before 찾아봐"</p>
                   </div>
                   <div className="p-3 rounded-lg bg-bg-alt border border-line-soft">
-                    <p className="text-[10px] font-bold text-emerald-600 mb-1 tracking-wider uppercase">3차 힌트</p>
+                    <p className="text-[11px] font-bold text-emerald-600 mb-1 tracking-wider uppercase">3차 힌트</p>
                     <p className="text-xs font-semibold text-ink mb-0.5">스켈레톤만</p>
-                    <p className="text-[11px] text-ink-mute leading-relaxed">핵심 로직은 비워둠</p>
+                    <p className="text-xs text-ink-mute leading-relaxed">핵심 로직은 비워둠</p>
                   </div>
                 </div>
               </div>
@@ -592,7 +589,7 @@
                   <I.GitPullRequest className="w-4 h-4 text-brand" />
                   <p className="text-xs font-bold text-ink-mute tracking-wider uppercase">PR 본문 템플릿</p>
                 </div>
-                <pre className="bg-bg-alt rounded-lg p-4 text-[11px] leading-relaxed overflow-x-auto text-ink-soft" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace' }}>
+                <pre className="bg-bg-alt rounded-lg p-4 text-xs leading-relaxed overflow-x-auto text-ink-soft" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace' }}>
 {`## 목표
 - 시나리오: 좌석 2개에 동시 매수 10건 발생
 - 재현하려는 통증: 잔고가 음수로 떨어지는 race condition
@@ -648,14 +645,14 @@
                 <div className="bg-bg-alt rounded-lg p-4 text-xs leading-relaxed">
                   <p className="font-bold text-ink mb-1.5">Q. "비관적 락 vs 분산락 어떻게 선택했어요?"</p>
                   <p className="text-ink-soft mb-3 leading-relaxed">A. 단일 인스턴스라면 비관적 락이 단순. 다중 인스턴스 가정해서 분산락도 구현 비교 — k6 100 RPS에서 분산락 TPS 1.4배 높았음. 다만 Redis 인프라 비용 트레이드오프.</p>
-                  <p className="text-[10px] num font-mono text-ink-mute">[근거] PR #5 · [태그] #락 #5주차</p>
+                  <p className="text-[11px] num font-mono text-ink-mute">[근거] PR #5 · [태그] #락 #5주차</p>
                 </div>
-                <div className="grid sm:grid-cols-3 gap-2 mt-4 text-[11px] text-ink-soft">
+                <div className="grid sm:grid-cols-3 gap-2 mt-4 text-xs text-ink-soft">
                   <div className="p-2.5 rounded bg-bg-alt/60"><strong className="text-brand">직접 한 경험</strong> — "직접 깨뜨리고 측정했습니다"</div>
                   <div className="p-2.5 rounded bg-bg-alt/60"><strong className="text-amber-600">숫자</strong> — TPS · 응답시간 같은 구체 수치</div>
                   <div className="p-2.5 rounded bg-bg-alt/60"><strong className="text-emerald-600">트레이드오프</strong> — 다른 선택지 단점</div>
                 </div>
-                <p className="text-[11px] text-ink-mute mt-4">매주 PR의 "면접 답변 카드 초안"이 쌓임 → 19주차 정리 → 20주차 모의면접에서 사용</p>
+                <p className="text-xs text-ink-mute mt-4">매주 PR의 "면접 답변 카드 초안"이 쌓임 → 19주차 정리 → 20주차 모의면접에서 사용</p>
               </div>
 
             </div>
@@ -671,7 +668,7 @@
                 </p>
                 <p className="text-sm text-ink-mute mb-8">완주 시 약 240시간 학습 · GitHub PR · 블로그 15편 · 면접 답변 카드</p>
                 <div className="inline-flex items-center gap-2 text-xs text-ink-mute">
-                  <div className="w-5 h-5 rounded bg-brand flex items-center justify-center text-white font-bold text-[9px]">CS</div>
+                  <div className="w-5 h-5 rounded bg-brand flex items-center justify-center text-white font-bold text-[10px]">CS</div>
                   <span className="font-medium text-ink">CS Study</span>
                   <span>·</span>
                   <span>20주 백엔드 면접 정복 · v3.0</span>
@@ -692,7 +689,7 @@
               >
                 <div className="flex items-center justify-between px-6 py-4 border-b border-line flex-shrink-0">
                   <div>
-                    <p className="text-[10px] font-bold text-brand tracking-wider uppercase mb-0.5">시나리오 MD 예시</p>
+                    <p className="text-[11px] font-bold text-brand tracking-wider uppercase mb-0.5">시나리오 MD 예시</p>
                     <h3 className="font-bold text-lg">1주차 — JVM 메모리 모델 & 스레드</h3>
                   </div>
                   <button
@@ -814,7 +811,7 @@ STEP 4. 출발 코드 (본인 도메인 기반)
               >
                 <div className="flex items-center justify-between px-6 py-4 border-b border-line flex-shrink-0">
                   <div>
-                    <p className="text-[10px] font-bold text-brand tracking-wider uppercase mb-0.5">AI 사용 규칙</p>
+                    <p className="text-[11px] font-bold text-brand tracking-wider uppercase mb-0.5">AI 사용 규칙</p>
                     <h3 className="font-bold text-lg">CLAUDE.md</h3>
                   </div>
                   <button
@@ -871,7 +868,7 @@ AI는 **힌트와 리뷰**로만 돕는다.
                 </div>
                 <div className="px-6 py-4 border-t border-line flex-shrink-0 bg-bg-alt">
                   <p className="text-xs text-ink-mute leading-relaxed">
-                    <strong className="text-ink">설치</strong>: GitHub repo 루트에 <code className="bg-white px-1.5 py-0.5 rounded font-mono text-[11px]">CLAUDE.md</code> 두면 자동 적용. 멤버 로컬에도 동일 파일 복사 권장.
+                    <strong className="text-ink">설치</strong>: GitHub repo 루트에 <code className="bg-white px-1.5 py-0.5 rounded font-mono text-xs">CLAUDE.md</code> 두면 자동 적용. 멤버 로컬에도 동일 파일 복사 권장.
                   </p>
                 </div>
               </div>
@@ -890,7 +887,7 @@ AI는 **힌트와 리뷰**로만 돕는다.
               >
                 <div className="flex items-center justify-between px-6 py-4 border-b border-line flex-shrink-0">
                   <div>
-                    <p className="text-[10px] font-bold text-brand tracking-wider uppercase mb-0.5">1주차 학습 흐름</p>
+                    <p className="text-[11px] font-bold text-brand tracking-wider uppercase mb-0.5">1주차 학습 흐름</p>
                     <h3 className="font-bold text-lg">7명 · 같은 4단계 · 다른 도메인</h3>
                   </div>
                   <button
@@ -905,7 +902,7 @@ AI는 **힌트와 리뷰**로만 돕는다.
                 <div className="overflow-y-auto p-5 md:p-6 space-y-3">
                   {/* 공통 4단계 안내 + PR 경계 */}
                   <div className="bg-gradient-to-r from-brand-faint to-blue-50/40 rounded-xl p-4 border border-brand/10">
-                    <p className="text-[10px] font-bold text-brand tracking-wider uppercase mb-3">공통 4단계 진행 + PR 경계</p>
+                    <p className="text-[11px] font-bold text-brand tracking-wider uppercase mb-3">공통 4단계 진행 + PR 경계</p>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                       {[
                         { n: '1', t: 'Race condition', d: '도메인 통증 직접 마주침', pr: '월 PR', prBg: 'bg-amber-100 text-amber-800' },
@@ -915,15 +912,15 @@ AI는 **힌트와 리뷰**로만 돕는다.
                       ].map((s, i) => (
                         <div key={i} className="bg-white rounded-lg p-3 border border-white">
                           <div className="flex items-center justify-between mb-1">
-                            <p className="text-[10px] font-mono num text-brand font-bold">STAGE {s.n}</p>
-                            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${s.prBg}`}>{s.pr}</span>
+                            <p className="text-[11px] font-mono num text-brand font-bold">STAGE {s.n}</p>
+                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${s.prBg}`}>{s.pr}</span>
                           </div>
                           <p className="text-xs font-bold text-ink mt-0.5">{s.t}</p>
-                          <p className="text-[10px] text-ink-mute mt-0.5 leading-snug">{s.d}</p>
+                          <p className="text-[11px] text-ink-mute mt-0.5 leading-snug">{s.d}</p>
                         </div>
                       ))}
                     </div>
-                    <div className="mt-3 pt-3 border-t border-brand/10 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] text-ink-soft">
+                    <div className="mt-3 pt-3 border-t border-brand/10 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-ink-soft">
                       <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-amber-400"></span><strong className="text-ink">월 모임 PR 마감 (토 23:59)</strong> · STAGE 1~2까지</span>
                       <span className="text-ink-mute">→</span>
                       <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-brand"></span><strong className="text-ink">목 모임 PR 마감 (화 23:59)</strong> · STAGE 3까지</span>
@@ -944,7 +941,7 @@ AI는 **힌트와 리뷰**로만 돕는다.
                     return (
                       <div key={idx} className="bg-white border border-line rounded-xl p-4 md:p-5">
                         <div className="flex items-baseline gap-2 mb-3 pb-3 border-b border-line-soft">
-                          <span className="text-[10px] num font-mono text-ink-mute">M{idx+1}</span>
+                          <span className="text-[11px] num font-mono text-ink-mute">M{idx+1}</span>
                           <h4 className="font-bold text-base">{m.name}</h4>
                           <span className="text-xs text-ink-mute">·</span>
                           <p className="text-sm text-brand font-semibold">{m.domain}</p>
@@ -953,19 +950,19 @@ AI는 **힌트와 리뷰**로만 돕는다.
                           {stages.map((s, i) => (
                             <div key={i} className={`rounded-lg p-3 border ${stageColors[i]} relative`}>
                               <div className="flex items-center justify-between mb-2">
-                                <span className={`text-[10px] num font-mono font-bold px-1.5 py-0.5 rounded ${stageBadges[i]}`}>STAGE {i+1}</span>
-                                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${prTags[i].cls}`}>{prTags[i].label}</span>
+                                <span className={`text-[11px] num font-mono font-bold px-1.5 py-0.5 rounded ${stageBadges[i]}`}>STAGE {i+1}</span>
+                                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${prTags[i].cls}`}>{prTags[i].label}</span>
                               </div>
                               <p className="text-xs font-bold text-ink mb-1.5 leading-snug">{s.act}</p>
                               {s.code && (
-                                <p className="text-[10px] font-mono bg-white/60 px-2 py-1 rounded text-ink-soft mb-1.5 leading-snug">{s.code}</p>
+                                <p className="text-[11px] font-mono bg-white/60 px-2 py-1 rounded text-ink-soft mb-1.5 leading-snug">{s.code}</p>
                               )}
                               {s.pain && (
-                                <p className="text-[10px] text-ink-soft mb-2 leading-snug"><strong className="text-ink">통증:</strong> {s.pain}</p>
+                                <p className="text-[11px] text-ink-soft mb-2 leading-snug"><strong className="text-ink">통증:</strong> {s.pain}</p>
                               )}
                               <div className="flex flex-wrap gap-1">
                                 {s.concepts.map((c, k) => (
-                                  <span key={k} className="text-[9px] px-1.5 py-0.5 rounded bg-white border border-line text-ink-soft">{c}</span>
+                                  <span key={k} className="text-[10px] px-1.5 py-0.5 rounded bg-white border border-line text-ink-soft">{c}</span>
                                 ))}
                               </div>
                             </div>
