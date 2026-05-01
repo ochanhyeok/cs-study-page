@@ -330,7 +330,7 @@
                       { n: 's1', step: '겪기', sub: '문제 재현', when: '일~월 작업', whenTag: '월 모임 발표', ex: '쿠폰 100개에 200명 동시 신청 → 105개 발급. race 확인.', required: true },
                       { n: 's2', step: '확장', sub: '다른 각도', when: '화~수 작업', whenTag: '같은 PR에 커밋', ex: '마감 플래그 추가 → 다른 스레드에서 안 보임. visibility 만남.', required: true },
                       { n: 's3', step: '해결', sub: '측정 + 풀이', when: '목 직전', whenTag: '목 모임 발표', ex: '스레드 50/100/1000 측정 후 AtomicInteger. 5회 평균 0건.', required: true },
-                      { n: 's4', step: 'Spring 통합', sub: '확장 (선택)', when: '여유 있으면', whenTag: '선택', ex: 'Spring Boot에 올려 Bean 싱글톤 안전성 체감.', required: false },
+                      { n: 's4', step: 'Virtual Threads', sub: '확장 (선택)', when: '여유 있으면', whenTag: '선택', ex: '같은 race를 Java 21 가상 스레드 1만 개로 재현. (4주차+에선 Spring 통합으로 바뀜)', required: false },
                     ].map((s, i) => (
                       <div key={i} className="flex flex-col items-center text-center">
                         {/* 원형 뱃지 */}
