@@ -321,10 +321,10 @@
                 <ol className="space-y-4">
                   {[
                     { n: '01', title: 'example 4단계 직접 돌려보기', desc: '은행 잔고 도메인으로 만든 참고 코드 (Stage1~4). IntelliJ에서 ▶ 클릭하면서 race 발생 / visibility 위반 / 측정 / Virtual Threads 직접 체험. measurements.md가 자동 누적되는 것도 확인.', tag: 'Day 0 · 10분', code: 'topics/01-jvm-thread/example/' },
-                    { n: '02', title: 'scenario.md 정독 + 본인 도메인 1개 선택', desc: '주차마다 시나리오 1개. 7개 도메인 후보(쿠폰/좌석/재고/좋아요/출퇴근/환불/volatile) 중 1개 선택. 매 주차마다 새로 고름.', tag: '일요일', code: 'topics/01-jvm-thread/scenario.md' },
-                    { n: '03', title: '본인 폴더에서 도메인 코드 변환', desc: 'example의 BankAccount → 본인 도메인 (예: CouponEvent). 본인 폴더에 이미 있는 Main.java를 STAGE 1 race 재현 코드로 채움. ▶ 누르면 race 결과 확인.', tag: '월 모임 전', code: 'topics/01-jvm-thread/members/{본인}/' },
+                    { n: '02', title: 'scenario.md 정독 + 본인 도메인 1개 선택', desc: '주차마다 시나리오 1개. 7개 도메인 후보(쿠폰/좌석/재고/좋아요/출퇴근/환불/volatile) 중 1개 선택. 매 주차마다 새로 고름.', tag: '금요일', code: 'topics/01-jvm-thread/scenario.md' },
+                    { n: '03', title: '본인 폴더에서 도메인 코드 변환 + s1/s2 시도', desc: 'example의 BankAccount → 본인 도메인 (예: CouponEvent). s1 (race 재현) + s2 (visibility 위반) 코드 작성. 토 14:00까지 Draft PR 마감.', tag: '금~토 14시', code: 'topics/01-jvm-thread/members/{본인}/' },
                     { n: '04', title: '측정 + 자동 기록', desc: 'STAGE 3에서 synchronized / AtomicInteger 적용해보고 비교 측정. MeasurementLog.save() 한 줄 호출하면 본인 폴더 measurements.md에 시간순 자동 누적.', tag: '화 ~ 수', code: 'MeasurementLog.save("s3", "synchronized", 0, 600);' },
-                    { n: '05', title: 'Draft PR → Ready → 머지', desc: '월 모임에 Draft PR로 시도 발표 (머지 X). 화~수 같은 브랜치에 s2/s3 커밋 추가. 수 23:59에 Ready로 전환. 목 모임에 해결 발표 후 운영자가 머지.', tag: '월 → 목', code: 'gh pr create --draft  →  gh pr ready' },
+                    { n: '05', title: 'Draft PR → Ready → 머지', desc: '토 14:00까지 Draft PR (s1+s2). 월 모임에서 시도 발표 (머지 X). 화~수에 s3 (측정+해결) 커밋 추가. 수 23:59에 Ready로 전환. 목 모임에서 해결 발표 후 머지.', tag: '토 → 목', code: 'gh pr create --draft  →  gh pr ready' },
                     { n: '06', title: '학습 기록 (자유)', desc: '블로그 / 노션 / 본인 메모 등 형식 자유. measurements.md 데이터 활용해서 정리해두면 12주차 끝에 모의 면접 시간에 본인 자료로 사용 가능.', tag: '주말', code: '블로그 / 노션 / measurements.md 옆 메모' },
                   ].map((s, i) => (
                     <li key={i} className="relative md:pl-20">
@@ -372,8 +372,8 @@
 
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-2 relative">
                     {[
-                      { n: 's1', step: '겪기', sub: '문제 재현', when: '일~월 작업', whenTag: '월 모임 발표', ex: '쿠폰 100개에 200명 동시 신청 → 105개 발급. race 확인.', required: true },
-                      { n: 's2', step: '확장', sub: '다른 각도', when: '화~수 작업', whenTag: '같은 PR에 커밋', ex: '마감 플래그 추가 → 다른 스레드에서 안 보임. visibility 만남.', required: true },
+                      { n: 's1', step: '겪기', sub: '문제 재현', when: '금~토 작업', whenTag: '월 모임 발표', ex: '쿠폰 100개에 200명 동시 신청 → 105개 발급. race 확인.', required: true },
+                      { n: 's2', step: '확장', sub: '다른 각도', when: '금~토 작업', whenTag: '월 모임 발표', ex: '마감 플래그 추가 → 다른 스레드에서 안 보임. visibility 만남.', required: true },
                       { n: 's3', step: '해결', sub: '측정 + 풀이', when: '목 직전', whenTag: '목 모임 발표', ex: '스레드 50/100/1000 측정 후 AtomicInteger. 5회 평균 0건.', required: true },
                       { n: 's4', step: 'Virtual Threads', sub: '확장 (선택)', when: '여유 있으면', whenTag: '선택', ex: '같은 race를 Java 21 가상 스레드 1만 개로 재현. (4주차+에선 Spring 통합으로 바뀜)', required: false },
                     ].map((s, i) => (
@@ -533,9 +533,9 @@
                 {/* 메인 타임라인 - 큰 바 */}
                 <div className="flex items-stretch h-24 rounded-xl overflow-hidden border border-line mb-2 shadow-sm">
                   <div className="bg-red-100 text-red-900 flex flex-col items-center justify-center px-2 border-r border-white" style={{flexGrow: 2.5}}>
-                    <span className="text-[10px] font-mono opacity-60">집 · 토~일</span>
-                    <p className="text-sm font-bold mt-0.5">시나리오 받고 s1 시도</p>
-                    <p className="text-[11px] opacity-70 mt-0.5">2일</p>
+                    <span className="text-[10px] font-mono opacity-60">집 · 금~토 14시</span>
+                    <p className="text-sm font-bold mt-0.5">s1 + s2 시도</p>
+                    <p className="text-[11px] opacity-70 mt-0.5">PR 마감</p>
                   </div>
                   <div className="bg-amber-500 text-white flex flex-col items-center justify-center px-1 border-r border-white/30" style={{flexGrow: 1.2}}>
                     <span className="text-[10px] font-mono opacity-80">월 모임</span>
@@ -544,7 +544,7 @@
                   </div>
                   <div className="bg-amber-100 text-amber-900 flex flex-col items-center justify-center px-2 border-r border-white" style={{flexGrow: 2}}>
                     <span className="text-[10px] font-mono opacity-60">집 · 화~수</span>
-                    <p className="text-sm font-bold mt-0.5">s2 visibility + s3 측정</p>
+                    <p className="text-sm font-bold mt-0.5">s3 측정 + 해결</p>
                     <p className="text-[11px] opacity-70 mt-0.5">2일</p>
                   </div>
                   <div className="bg-brand text-white flex flex-col items-center justify-center px-1" style={{flexGrow: 1.2}}>
@@ -556,7 +556,7 @@
 
                 {/* Day markers */}
                 <div className="flex text-[11px] num font-mono text-ink-mute mb-5">
-                  <div className="text-left" style={{flexGrow: 2.5}}>전 주 금 · 시나리오 공개</div>
+                  <div className="text-left" style={{flexGrow: 2.5}}>금 시나리오 → 토 14시 PR 마감</div>
                   <div className="text-center" style={{flexGrow: 1.2}}>월 · 시도 발표</div>
                   <div className="text-center" style={{flexGrow: 2}}>수 23:59 · PR Ready</div>
                   <div className="text-right" style={{flexGrow: 1.2}}>목 · 머지</div>
@@ -564,11 +564,11 @@
 
                 {/* 한 줄 요약 */}
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-ink-soft justify-center pt-4 border-t border-line-soft">
-                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-red-300"></span>토~일 시도</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-red-300"></span>금~토 14시 시도</span>
                   <span className="text-ink-mute">→</span>
                   <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-amber-500"></span>월 시도 발표</span>
                   <span className="text-ink-mute">→</span>
-                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-amber-300"></span>화~수 해결 + 측정</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-amber-300"></span>화~수 s3 측정 + 해결</span>
                   <span className="text-ink-mute">→</span>
                   <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-brand"></span>목 해결 발표 + 머지</span>
                 </div>
@@ -601,7 +601,7 @@
                     </div>
                   ))}
                 </div>
-                <p className="text-xs text-ink-mute mt-3">Draft PR 본인 폴더에 올리고 화면 공유 · 머지는 X (Draft 상태 유지)</p>
+                <p className="text-xs text-ink-mute mt-3">Draft PR 마감: 토 14:00 · 화면 공유로 발표, 머지는 X (Draft 유지)</p>
               </div>
 
               {/* 목 모임 timeline */}
@@ -711,7 +711,8 @@
                   <h3 className="font-bold text-base mb-4">매주 사이클</h3>
                   <ol className="space-y-3 text-sm text-ink-soft">
                     <li className="flex gap-3"><span className="num font-mono text-brand text-xs mt-0.5 w-6">日</span><span>scenario.md 읽기</span></li>
-                    <li className="flex gap-3"><span className="num font-mono text-brand text-xs mt-0.5 w-6">月</span><span>s1 → Draft PR → 발표</span></li>
+                    <li className="flex gap-3"><span className="num font-mono text-brand text-xs mt-0.5 w-6">土</span><span>14:00까지 s1+s2 → Draft PR</span></li>
+                    <li className="flex gap-3"><span className="num font-mono text-brand text-xs mt-0.5 w-6">月</span><span>시도 발표 (Draft 유지)</span></li>
                     <li className="flex gap-3"><span className="num font-mono text-ink-mute text-xs mt-0.5 w-6">水</span><span>s2 커밋</span></li>
                     <li className="flex gap-3"><span className="num font-mono text-ink-mute text-xs mt-0.5 w-6">土</span><span>s3 측정 → PR Ready</span></li>
                     <li className="flex gap-3"><span className="num font-mono text-brand text-xs mt-0.5 w-6">木</span><span>해결 발표 → 머지</span></li>
@@ -1130,7 +1131,7 @@ System.out.println("[공유자원]: " + instance.[공유자원]);
 STAGE 진행 가이드
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-[월 PR 마감: 토 23:59]
+[월 모임용 Draft PR 마감: 토 14:00]
 
 ▸ STAGE 1 — 망가짐 직접 보기 (필수)
   · 위 코드로 race 발생 확인
@@ -1164,7 +1165,7 @@ w.join();                               // 영원히 안 멈출 수 있음
    3. -Xint 옵션으로 인터프리터 모드 강제 — 안 보임이 가장 잘 보임
    4. 그래도 안 되면 운영자 mention. 재현 안 되는 게 학습 자료.
 
-[목 PR 마감: 수 23:59]
+[목 모임용 PR Ready 전환: 수 23:59]
 
 ▸ STAGE 3 — 측정 + 해결 (필수)
   ※ 이 단계부터 금지 키워드 해제 — synchronized / Atomic / volatile 사용 가능.
@@ -1395,7 +1396,7 @@ AI는 **힌트와 리뷰**로만 돕는다.
                       ))}
                     </div>
                     <div className="mt-3 pt-3 border-t border-brand/10 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-ink-soft">
-                      <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-amber-400"></span><strong className="text-ink">월 모임 PR 마감 (토 23:59)</strong> · STAGE 1~2까지</span>
+                      <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-amber-400"></span><strong className="text-ink">월 모임 Draft PR 마감 (토 14:00)</strong> · STAGE 1~2까지</span>
                       <span className="text-ink-mute">→</span>
                       <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-brand"></span><strong className="text-ink">목 모임 PR 마감 (수 23:59)</strong> · STAGE 3까지</span>
                     </div>
