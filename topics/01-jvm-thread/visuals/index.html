@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>1주차 — JVM/Thread 시각화 모음</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --primary: #4f46e5;
+    --queue: #f59e0b;
+    --thread: #4f46e5;
+    --danger: #ef4444;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --accent: #06b6d4;
+    --border: #e5e7eb;
+    --code-bg: #1f2937;
+    --code-text: #e5e7eb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', 'Segoe UI', sans-serif;
+  }
+  .page {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 48px 24px;
+  }
+  .top {
+    text-align: center;
+    padding: 64px 24px 24px;
+  }
+  .top h1 {
+    font-size: 32px;
+    margin: 0 0 8px;
+    letter-spacing: -0.02em;
+  }
+  .top .sub {
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .toc {
+    max-width: 880px;
+    margin: 24px auto 0;
+    padding: 24px 32px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .toc-title {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .toc-list {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 24px;
+  }
+  .toc-list li {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .toc-list a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 40px;
+    margin-bottom: 48px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .sec-num {
+    display: inline-block;
+    font-family: 'SF Mono', 'Menlo', monospace;
+    font-size: 13px;
+    color: var(--primary);
+    font-weight: 700;
+    background: #eef2ff;
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 12px;
+  }
+  .section h2 {
+    margin: 0 0 8px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .section .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+
+  /* ============ 공통 컴포넌트 ============ */
+  .col {
+    background: #f9fafb;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .col-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-family: 'SF Mono', 'Menlo', monospace;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+  .chip.queue { background: #fef3c7; border-color: #fcd34d; color: #92400e; }
+  .chip.thread { background: #eef2ff; border-color: #c7d2fe; color: #3730a3; }
+  .note {
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .key { color: var(--primary); font-weight: 600; }
+  .key-danger { color: var(--danger); font-weight: 600; }
+  .code {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-family: 'SF Mono', 'Menlo', monospace;
+    font-size: 12.5px;
+    line-height: 1.75;
+    overflow-x: auto;
+    white-space: pre;
+    tab-size: 2;
+  }
+  .code .comment { color: #9ca3af; }
+  .code .keyword { color: #93c5fd; }
+  .code .string { color: #fcd34d; }
+  .code .danger { color: #fca5a5; }
+  .code .success { color: #6ee7b7; }
+  .danger-box {
+    margin-top: 20px;
+    padding: 16px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .danger-box .label {
+    color: var(--danger);
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+  .insight-box {
+    margin-top: 20px;
+    padding: 16px;
+    background: #eef2ff;
+    border-left: 3px solid var(--primary);
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  /* ============ 01. 스레드 풀 ============ */
+  .pool-row {
+    display: grid;
+    grid-template-columns: 1fr 64px 1fr;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .arrow-h {
+    text-align: center;
+    color: var(--muted);
+    font-size: 28px;
+  }
+  .timeline-strip {
+    padding: 20px;
+    background: #f9fafb;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .strip-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .lane {
+    display: grid;
+    grid-template-columns: 56px repeat(5, 1fr);
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+    font-family: 'SF Mono', 'Menlo', monospace;
+    font-size: 12px;
+  }
+  .lane-label { font-weight: 700; color: var(--thread); }
+  .task {
+    background: #fef3c7;
+    border: 1px solid #fcd34d;
+    color: #92400e;
+    padding: 6px 8px;
+    border-radius: 4px;
+    text-align: center;
+  }
+
+  /* ============ 02. CountDownLatch ============ */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .panel {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    background: #f9fafb;
+  }
+  .panel-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .panel-bad .panel-title { color: var(--danger); }
+  .panel-good .panel-title { color: var(--primary); }
+  .panel-desc { font-size: 11.5px; color: var(--muted); margin-bottom: 12px; }
+  .track {
+    position: relative;
+    height: 200px;
+    background: white;
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+  }
+  .start-line {
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    bottom: 16px;
+    width: 3px;
+    background: var(--danger);
+  }
+  .runner {
+    position: absolute;
+    width: 32px;
+    height: 16px;
+    border-radius: 4px;
+    font-family: 'SF Mono', 'Menlo', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary);
+  }
+  .panel-bad .r1 { left: 80px; top: 28px; }
+  .panel-bad .r2 { left: 32px; top: 56px; }
+  .panel-bad .r3 { left: 140px; top: 84px; }
+  .panel-bad .r4 { left: 56px; top: 112px; }
+  .panel-bad .r5 { left: 200px; top: 140px; }
+  .panel-bad .r6 { left: 90px; top: 168px; }
+  .panel-good .r1 { left: 32px; top: 28px; }
+  .panel-good .r2 { left: 32px; top: 56px; }
+  .panel-good .r3 { left: 32px; top: 84px; }
+  .panel-good .r4 { left: 32px; top: 112px; }
+  .panel-good .r5 { left: 32px; top: 140px; }
+  .panel-good .r6 { left: 32px; top: 168px; }
+  .signal {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--danger);
+    color: white;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: 4px;
+  }
+
+  /* ============ 03. race timeline ============ */
+  .balance-box {
+    background: #fef2f2;
+    border: 2px solid var(--danger);
+    border-radius: 8px;
+    padding: 12px 16px;
+    text-align: center;
+    font-family: 'SF Mono', 'Menlo', monospace;
+    margin-bottom: 24px;
+    display: inline-block;
+  }
+  .balance-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .balance-val {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--danger);
+  }
+  .race-grid {
+    display: grid;
+    grid-template-columns: 56px repeat(6, 1fr);
+    gap: 4px;
+    align-items: center;
+    margin-bottom: 6px;
+    font-family: 'SF Mono', 'Menlo', monospace;
+    font-size: 11px;
+  }
+  .time-header-row {
+    grid-column: 2 / -1;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 4px;
+    color: var(--muted);
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+  .race-step {
+    padding: 8px 6px;
+    border-radius: 4px;
+    text-align: center;
+    border: 1px solid var(--border);
+    background: white;
+  }
+  .race-step.read { background: #fef3c7; border-color: #fcd34d; color: #92400e; }
+  .race-step.write { background: #fecaca; border-color: #f87171; color: #991b1b; }
+  .race-step.idle { background: #f3f4f6; color: #9ca3af; border-style: dashed; }
+  .annotate {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: #fef3c7;
+    border-left: 3px solid var(--warning);
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  /* ============ 04. visibility cache ============ */
+  .ram {
+    background: #f3f4f6;
+    border: 2px solid var(--muted);
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .ram-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .ram-var {
+    font-family: 'SF Mono', 'Menlo', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--success);
+  }
+  .ram-note {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .barriers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    position: relative;
+  }
+  .barriers::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: repeating-linear-gradient(to bottom, var(--danger) 0 6px, transparent 6px 12px);
+    transform: translateX(-50%);
+  }
+  .core {
+    border: 2px solid;
+    border-radius: 10px;
+    padding: 18px;
+    background: white;
+  }
+  .core.left { border-color: var(--success); }
+  .core.right { border-color: var(--danger); }
+  .core-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .left .core-label { color: var(--success); }
+  .right .core-label { color: var(--danger); }
+  .core-thread { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+  .cache {
+    background: #f9fafb;
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+  .cache-title {
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .cache-var {
+    font-family: 'SF Mono', 'Menlo', monospace;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .left .cache-var { color: var(--success); }
+  .right .cache-var { color: var(--danger); }
+  .activity { font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .barrier-label {
+    text-align: center;
+    margin: 12px 0;
+    font-size: 12px;
+    color: var(--danger);
+    font-weight: 600;
+  }
+
+  /* ============ 05. JIT ============ */
+  .jit-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .jit-row .arrow-h {
+    font-size: 24px;
+  }
+  .jit-col {
+    background: #f9fafb;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .jit-col.before { border-left: 3px solid var(--success); }
+  .jit-col.after { border-left: 3px solid var(--danger); }
+  .jit-stage {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .jit-col.before .jit-stage { color: var(--success); }
+  .jit-col.after .jit-stage { color: var(--danger); }
+  .jit-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  /* ============ 06. JVM flow ============ */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .flow-step {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 16px;
+    padding: 14px 16px;
+    background: #f9fafb;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
+    border-radius: 8px;
+    align-items: center;
+  }
+  .flow-step.compile { border-left-color: var(--warning); }
+  .flow-step.runtime { border-left-color: var(--accent); }
+  .flow-step.optimize { border-left-color: var(--danger); }
+  .step-tag {
+    font-family: 'SF Mono', 'Menlo', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary);
+    background: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .flow-step.compile .step-tag { color: var(--warning); }
+  .flow-step.runtime .step-tag { color: var(--accent); }
+  .flow-step.optimize .step-tag { color: var(--danger); }
+  .step-desc {
+    font-size: 12.5px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .step-desc small { color: var(--muted); }
+  .arrow-down { text-align: center; color: var(--muted); font-size: 20px; }
+
+  /* ============ 07. memory barrier ============ */
+  .barrier-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .barrier-row {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 14px;
+    align-items: center;
+  }
+  .barrier-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    font-weight: 700;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .barrier-step {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+  }
+  .barrier-step .what {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .barrier-step .why {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .barrier-arrow {
+    text-align: center;
+    color: var(--muted);
+    margin-left: 14px;
+  }
+
+  /* ============ 08. CAS ============ */
+  .cas-step {
+    padding: 8px 6px;
+    border-radius: 4px;
+    text-align: center;
+    border: 1px solid var(--border);
+    background: white;
+    font-family: 'SF Mono', 'Menlo', monospace;
+    font-size: 11px;
+  }
+  .cas-step.read { background: #fef3c7; border-color: #fcd34d; color: #92400e; }
+  .cas-step.check { background: #dbeafe; border-color: #93c5fd; color: #1e3a8a; }
+  .cas-step.success { background: #d1fae5; border-color: #6ee7b7; color: #065f46; }
+  .cas-step.fail { background: #fecaca; border-color: #f87171; color: #991b1b; }
+  .cas-step.retry { background: #fed7aa; border-color: #fdba74; color: #9a3412; }
+  .cas-step.idle { background: #f3f4f6; color: #9ca3af; border-style: dashed; }
+  .cas-grid {
+    display: grid;
+    grid-template-columns: 56px repeat(7, 1fr);
+    gap: 4px;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .cas-grid .lane-label {
+    font-family: 'SF Mono', 'Menlo', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .cas-time-header {
+    grid-column: 2 / -1;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    color: var(--muted);
+    font-size: 10px;
+    margin-bottom: 4px;
+    font-family: 'SF Mono', 'Menlo', monospace;
+  }
+  .cas-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: #f9fafb;
+    border-radius: 8px;
+    font-size: 12px;
+  }
+  .cas-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .cas-legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1px solid;
+  }
+
+  /* ============ 09. sync vs CAS ============ */
+  .vs-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    background: #f9fafb;
+  }
+  .vs-card.sync { border-left: 4px solid var(--primary); }
+  .vs-card.cas { border-left: 4px solid var(--success); }
+  .vs-card-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .vs-card.sync .vs-card-title { color: var(--primary); }
+  .vs-card.cas .vs-card-title { color: var(--success); }
+  .vs-card-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .vs-card.sync .vs-card-tag {
+    background: #eef2ff;
+    color: var(--primary);
+  }
+  .vs-card.cas .vs-card-tag {
+    background: #d1fae5;
+    color: var(--success);
+  }
+  .vs-flow {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .vs-flow ol {
+    margin: 0;
+    padding-left: 20px;
+  }
+  .vs-flow li {
+    margin-bottom: 4px;
+  }
+  .vs-analogy {
+    background: #fef3c7;
+    border-left: 3px solid var(--warning);
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #78350f;
+  }
+
+  /* ============ 비교 표 (09, 10 공통) ============ */
+  .compare-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 24px;
+    font-size: 13px;
+  }
+  .compare-table th,
+  .compare-table td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .compare-table th {
+    background: #f9fafb;
+    font-weight: 700;
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .compare-table th:first-child {
+    border-top-left-radius: 8px;
+  }
+  .compare-table th:last-child {
+    border-top-right-radius: 8px;
+  }
+  .compare-table tr:last-child td {
+    border-bottom: none;
+  }
+  .compare-table .col-label {
+    font-weight: 600;
+    color: var(--text);
+    width: 28%;
+  }
+  .compare-table .sync-cell { color: var(--primary); font-weight: 500; }
+  .compare-table .cas-cell { color: var(--success); font-weight: 500; }
+  .compare-table .race-cell { color: var(--danger); font-weight: 500; }
+  .compare-table .vis-cell { color: var(--accent); font-weight: 500; }
+
+  /* ============ N 의미 / 원자성 분해 ============ */
+  .meta-box {
+    margin-top: 24px;
+    padding: 18px 20px;
+    background: #f9fafb;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .meta-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .meta-body {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+  .pattern-mini {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 8px;
+    font-size: 12.5px;
+  }
+  .pattern-mini th,
+  .pattern-mini td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .pattern-mini th {
+    background: white;
+    font-weight: 600;
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .pattern-mini tr:last-child td { border-bottom: none; }
+  .pattern-mini .pattern-name {
+    font-weight: 600;
+    width: 25%;
+  }
+  .pattern-mini .pattern-name.our { color: var(--primary); }
+  .pattern-mini .pattern-name.other { color: var(--muted); }
+
+  /* count++ 3단계 분해 */
+  .decompose {
+    margin-top: 20px;
+    padding: 18px 20px;
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 10px;
+  }
+  .decompose-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #92400e;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .decompose-eq {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .decompose-eq .src {
+    font-family: 'SF Mono', 'Menlo', monospace;
+    font-size: 14px;
+    background: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-weight: 600;
+  }
+  .decompose-eq .eq {
+    font-size: 18px;
+    color: var(--muted);
+  }
+  .decompose-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .decompose-step {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+  }
+  .decompose-step .step-num {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    border-radius: 50%;
+    background: var(--warning);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .decompose-step .step-op {
+    font-family: 'SF Mono', 'Menlo', monospace;
+    font-size: 12px;
+    color: var(--text);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .decompose-step .step-detail {
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .atomic-vs {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: white;
+    border-left: 3px solid var(--success);
+    border-radius: 4px;
+    font-size: 12.5px;
+    line-height: 1.7;
+  }
+  .atomic-vs .label-on {
+    color: var(--success);
+    font-weight: 700;
+  }
+  .atomic-vs .label-off {
+    color: var(--danger);
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <h1>1주차 — JVM/Thread 시각화</h1>
+  <div class="sub">race / visibility / 해결책 비교 — 10개 컨셉 한 번에</div>
+</div>
+
+<div class="toc">
+  <div class="toc-title">목차</div>
+  <ul class="toc-list">
+    <li><a href="#s1">01. 스레드 풀 + 작업 큐</a></li>
+    <li><a href="#s2">02. CountDownLatch 출발선</a></li>
+    <li><a href="#s3">03. race condition 타임라인</a></li>
+    <li><a href="#s4">04. CPU 캐시 vs 메인 메모리</a></li>
+    <li><a href="#s5">05. JIT 최적화 전후</a></li>
+    <li><a href="#s6">06. JVM 실행 흐름</a></li>
+    <li><a href="#s7">07. synchronized 메모리 배리어</a></li>
+    <li><a href="#s8">08. CAS (Compare And Set) 동작 흐름</a></li>
+    <li><a href="#s9">09. synchronized vs CAS 비교</a></li>
+    <li><a href="#s10">10. race vs visibility 비교</a></li>
+  </ul>
+</div>
+
+<div class="page">
+
+<!-- ============ 01 ============ -->
+<section class="section" id="s1">
+  <span class="sec-num">01</span>
+  <h2>스레드 풀 + 작업 큐</h2>
+  <div class="subtitle">200개 일꾼이 1000개 일거리를 5번씩 분배 처리</div>
+
+  <div class="pool-row">
+    <div class="col">
+      <div class="col-title">작업 큐 (1000개)</div>
+      <div class="chips">
+        <span class="chip queue">W1</span>
+        <span class="chip queue">W2</span>
+        <span class="chip queue">W3</span>
+        <span class="chip queue">W4</span>
+        <span class="chip queue">W5</span>
+        <span class="chip queue">W6</span>
+        <span class="chip queue">…</span>
+        <span class="chip queue">W999</span>
+        <span class="chip queue">W1000</span>
+      </div>
+    </div>
+    <div class="arrow-h">→</div>
+    <div class="col">
+      <div class="col-title">스레드 풀 (200개)</div>
+      <div class="chips">
+        <span class="chip thread">T1</span>
+        <span class="chip thread">T2</span>
+        <span class="chip thread">T3</span>
+        <span class="chip thread">T4</span>
+        <span class="chip thread">T5</span>
+        <span class="chip thread">…</span>
+        <span class="chip thread">T199</span>
+        <span class="chip thread">T200</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="timeline-strip">
+    <div class="strip-title">한 스레드의 일생 (1000 ÷ 200 = 5회)</div>
+    <div class="lane">
+      <span class="lane-label">T1</span>
+      <span class="task">W1</span><span class="task">W201</span><span class="task">W401</span><span class="task">W601</span><span class="task">W801</span>
+    </div>
+    <div class="lane">
+      <span class="lane-label">T2</span>
+      <span class="task">W2</span><span class="task">W202</span><span class="task">W402</span><span class="task">W602</span><span class="task">W802</span>
+    </div>
+    <div class="lane">
+      <span class="lane-label">T200</span>
+      <span class="task">W200</span><span class="task">W400</span><span class="task">W600</span><span class="task">W800</span><span class="task">W1000</span>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="key">스레드</span>는 풀에 상주하며 작업 끝나면 큐에서 다음 작업을 꺼냄.
+    <span class="key">작업</span>은 1회용 — 처리되면 사라짐.
+    스레드 1000개로 늘리면 race가 줄어드는 게 아니라 <span class="key-danger">더 폭발적으로 발생</span> — race는 자원 부족 문제가 아니라 <span class="key-danger">동시 접근</span> 문제이기 때문.
+  </div>
+</section>
+
+<!-- ============ 02 ============ -->
+<section class="section" id="s2">
+  <span class="sec-num">02</span>
+  <h2>CountDownLatch — 동시 출발 신호</h2>
+  <div class="subtitle">스레드들을 출발선에 모았다가 신호와 함께 동시 출발</div>
+
+  <div class="compare">
+    <div class="panel panel-bad">
+      <div class="panel-title">submit만 사용</div>
+      <div class="panel-desc">스레드들이 흩어져서 시작 → race 잘 안 보임</div>
+      <div class="track">
+        <div class="runner r1">T1</div><div class="runner r2">T2</div><div class="runner r3">T3</div>
+        <div class="runner r4">T4</div><div class="runner r5">T5</div><div class="runner r6">T6</div>
+      </div>
+    </div>
+    <div class="panel panel-good">
+      <div class="panel-title">CountDownLatch 사용</div>
+      <div class="panel-desc">출발선에 모였다가 신호와 동시 출발 → race 폭발</div>
+      <div class="track">
+        <div class="start-line"></div>
+        <div class="runner r1">T1</div><div class="runner r2">T2</div><div class="runner r3">T3</div>
+        <div class="runner r4">T4</div><div class="runner r5">T5</div><div class="runner r6">T6</div>
+        <div class="signal">땅!</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code" style="margin-top: 24px;"><span class="comment">// 1) 카운터 1로 시작</span>
+<span class="keyword">CountDownLatch</span> startSignal = <span class="keyword">new</span> CountDownLatch(1);
+
+<span class="comment">// 2) 1000개 스레드 모두 출발선 대기</span>
+executor.submit(() -> {
+    startSignal.<span class="keyword">await</span>();          <span class="comment">// ← 정지 (CPU 0%)</span>
+    account.withdraw(1);
+});
+
+<span class="comment">// 3) Thread.sleep(100) — 출발선 도착 시간</span>
+<span class="comment">// 4) 동시 출발</span>
+startSignal.<span class="keyword">countDown</span>();           <span class="comment">// ← 카운터 0 → 모두 동시 풀림</span></div>
+
+  <div class="note">
+    비유: 운동회 출발선의 <span class="key">"땅!"</span> 신호. 모든 선수가 출발선에 모인 뒤 신호와 동시에 출발해야 누가 빠른지 정확히 비교 가능. <span class="key">Thread.sleep(100)</span>은 신호 보내기 전 모든 선수가 출발선에 도착할 시간.
+  </div>
+
+  <div class="meta-box">
+    <div class="meta-title">숫자 1의 의미 — countDown() 호출 횟수</div>
+    <div class="meta-body">
+      <code>new CountDownLatch(N)</code> 의 <strong>N은 신호가 N번 와야 풀린다</strong> 는 의미.
+      카운터가 N으로 시작 → <code>countDown()</code> 호출마다 1씩 감소 → 0 되면 모든 <code>await()</code> 풀림.<br>
+      우리는 <strong>메인이 신호 한 번만 보내면 200스레드가 동시 출발</strong>하면 되므로 <strong>N=1</strong>.
+    </div>
+    <table class="pattern-mini">
+      <thead>
+        <tr>
+          <th>패턴</th><th>N 값</th><th>countDown 호출</th><th>사용처</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="pattern-name our">A. 출발 신호 (우리)</td>
+          <td><code>new CountDownLatch(1)</code></td>
+          <td>메인이 1번</td>
+          <td>여러 스레드 <strong>동시 출발</strong></td>
+        </tr>
+        <tr>
+          <td class="pattern-name other">B. 종료 대기</td>
+          <td><code>new CountDownLatch(워커수)</code></td>
+          <td>워커가 끝나며 각자 1번</td>
+          <td>메인이 모든 워커 <strong>끝나기 대기</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight-box">
+    <strong>참고:</strong> <code>CountDownLatch</code>는 <span class="key">일회용</span> — 한 번 카운터가 0 되면 재사용 불가.
+    재사용 가능한 동기화가 필요하면 <code>CyclicBarrier</code> (1주차에는 안 쓰지만 참고).
+  </div>
+</section>
+
+<!-- ============ 03 ============ -->
+<section class="section" id="s3">
+  <span class="sec-num">03</span>
+  <h2>race condition — 1층에서 일어나는 일</h2>
+  <div class="subtitle">3개 스레드가 거의 같은 시점에 withdraw(1) 호출. balance 초기 100원.</div>
+
+  <div class="balance-box">
+    <div class="balance-label">초기 balance</div>
+    <div class="balance-val">100</div>
+  </div>
+
+  <div class="race-grid">
+    <span></span>
+    <div class="time-header-row">
+      <span>t=1</span><span>t=2</span><span>t=3</span><span>t=4</span><span>t=5</span><span>t=6</span>
+    </div>
+  </div>
+
+  <div class="race-grid">
+    <span class="lane-label">T1</span>
+    <span class="race-step read">read 100</span>
+    <span class="race-step idle">…</span>
+    <span class="race-step idle">…</span>
+    <span class="race-step write">write 99</span>
+    <span class="race-step idle">—</span>
+    <span class="race-step idle">—</span>
+  </div>
+  <div class="race-grid">
+    <span class="lane-label">T2</span>
+    <span class="race-step idle">…</span>
+    <span class="race-step read">read 100</span>
+    <span class="race-step idle">…</span>
+    <span class="race-step idle">…</span>
+    <span class="race-step write">write 99</span>
+    <span class="race-step idle">—</span>
+  </div>
+  <div class="race-grid">
+    <span class="lane-label">T3</span>
+    <span class="race-step idle">…</span>
+    <span class="race-step idle">…</span>
+    <span class="race-step read">read 100</span>
+    <span class="race-step idle">…</span>
+    <span class="race-step idle">…</span>
+    <span class="race-step write">write 99</span>
+  </div>
+
+  <div class="annotate">
+    <strong>주목:</strong> T1, T2, T3 모두 <strong>balance=100</strong>을 봄. 셋 다 "100 - 1 = 99" 계산 후 <strong>같은 99를 덮어씀</strong>.<br>
+    실제로는 <strong>3원 출금</strong>되어야 하는데, balance는 <strong>99 (1만 차감)</strong>로 남음.
+  </div>
+
+  <div class="danger-box">
+    <div class="label">race condition 본질</div>
+    <code>if (balance > 0) { balance--; }</code>는 사실 <span class="key-danger">read-modify-write 3단계</span>.
+    이 사이의 <span class="key-danger">"틈"</span>에 다른 스레드가 끼어들면 결과가 망가짐.
+    1000개 시도 시 100명만 성공해야 하는데 <span class="key-danger">120~150명 성공</span> + 잔고 음수로 떨어짐.
+  </div>
+
+  <div class="decompose">
+    <div class="decompose-title">한 줄 코드의 진짜 모습 — read-modify-write 3단계</div>
+    <div class="decompose-eq">
+      <span class="src">balance--</span>
+      <span class="eq">=</span>
+      <span style="font-size:12px;color:#92400e;">사실은 3개의 CPU 명령</span>
+    </div>
+    <div class="decompose-steps">
+      <div class="decompose-step">
+        <span class="step-num">1</span>
+        <div class="step-op">LOAD balance</div>
+        <div class="step-detail">메모리에서 100 읽기 <strong>(read)</strong></div>
+      </div>
+      <div class="decompose-step">
+        <span class="step-num">2</span>
+        <div class="step-op">SUB 1</div>
+        <div class="step-detail">100 - 1 = 99 계산 <strong>(modify)</strong></div>
+      </div>
+      <div class="decompose-step">
+        <span class="step-num">3</span>
+        <div class="step-op">STORE balance</div>
+        <div class="step-detail">메모리에 99 쓰기 <strong>(write)</strong></div>
+      </div>
+    </div>
+    <div class="atomic-vs">
+      <span class="label-off">비원자적</span> = 1, 2, 3 사이에 다른 스레드가 끼어들 수 있음 → race 발생<br>
+      <span class="label-on">원자적</span> = 1~3이 쪼갤 수 없는 한 덩어리로 일어남 → 끼어들 수 없음 → race 없음<br>
+      <strong>해결책</strong>: <code>synchronized</code> (락 + 메모리 배리어로 1~3을 묶음) 또는 <code>AtomicInteger</code> (CAS로 1~3을 한 번에)
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 ============ -->
+<section class="section" id="s4">
+  <span class="sec-num">04</span>
+  <h2>가시성 — CPU 캐시 vs 메인 메모리</h2>
+  <div class="subtitle">메인은 stopped=true로 바꿨는데 Worker는 여전히 false를 봄</div>
+
+  <div class="ram">
+    <div class="ram-label">메인 메모리 (RAM)</div>
+    <div class="ram-var">stopped = true</div>
+    <div class="ram-note">메인 스레드가 갱신함 (또는 갱신 예정)</div>
+  </div>
+
+  <div class="barrier-label">⚡ CPU 캐시 격리</div>
+
+  <div class="barriers">
+    <div class="core left">
+      <div class="core-label">CPU 코어 1</div>
+      <div class="core-thread">메인 스레드</div>
+      <div class="cache">
+        <div class="cache-title">L1 캐시</div>
+        <div class="cache-var">stopped = true</div>
+      </div>
+      <div class="activity">stopped = true 직접 수정<br>자기 캐시는 갱신됨</div>
+    </div>
+    <div class="core right">
+      <div class="core-label">CPU 코어 2</div>
+      <div class="core-thread">Worker 스레드</div>
+      <div class="cache">
+        <div class="cache-title">L1 캐시</div>
+        <div class="cache-var">stopped = false</div>
+      </div>
+      <div class="activity">while (!stopped) { } 무한 루프<br><strong>옛날 캐시 값만 봄</strong> → 영원히 안 멈춤</div>
+    </div>
+  </div>
+
+  <div class="danger-box">
+    <div class="label">핵심</div>
+    Worker는 <span class="key-danger">잠든 게 아님</span> — CPU 100% 활동 중.
+    문제는 <span class="key-danger">활동 중인 스레드가 자기 캐시의 옛날 값을 본다</span>는 것.
+    각 CPU 코어는 자체 캐시(L1/L2)를 가져 메인 메모리 접근 비용을 줄이지만, 그 대가로 코어 간 동기화가 명시적으로 강제되지 않으면 같은 변수의 다른 값을 본다.
+  </div>
+</section>
+
+<!-- ============ 05 ============ -->
+<section class="section" id="s5">
+  <span class="sec-num">05</span>
+  <h2>JIT 최적화 전후</h2>
+  <div class="subtitle">빈 루프는 hot spot. JIT가 변수를 레지스터에 캐싱해버린다.</div>
+
+  <div class="jit-row">
+    <div class="jit-col before">
+      <div class="jit-stage">컴파일 전 (인터프리터)</div>
+      <div class="code" style="margin-top: 8px;"><span class="keyword">while</span> (!stopped) {
+    <span class="comment">// 빈 루프 — 매 사이클 stopped를 메모리에서 읽음</span>
+}</div>
+      <div class="jit-desc">매 사이클마다 메모리 접근. 가시성 위반이 약하게 보이거나 안 보일 수 있음.</div>
+    </div>
+    <div class="arrow-h">↓</div>
+    <div class="jit-col after">
+      <div class="jit-stage">JIT 컴파일 후 (native)</div>
+      <div class="code" style="margin-top: 8px;"><span class="keyword">if</span> (!stopped) {           <span class="comment">// 한 번만 체크</span>
+    <span class="keyword">while</span> (<span class="success">true</span>) { }          <span class="danger">// 영원 루프로 고정</span>
+}</div>
+      <div class="jit-desc">stopped가 레지스터에 캐싱됨. 다른 스레드의 변경을 영영 보지 못함.</div>
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <strong>왜 일어나나?</strong> JIT(HotSpot JVM)는 자주 호출되는 메서드를 native 코드로 컴파일하면서 <span class="key">"loop invariant code motion"</span> 최적화를 적용한다.
+    "이 루프 안에서 stopped를 안 바꾸네 → 매번 메모리에서 읽지 말고 레지스터에 캐싱하자" 라고 판단.
+    `volatile` 키워드는 JIT에게 <span class="key">"이 변수는 캐싱 금지"</span>를 지시해 이 최적화를 막는다.
+    <code>-Xint</code> 옵션은 JIT 자체를 끄고 인터프리터 모드만 사용 → 가시성 위반의 안전망.
+  </div>
+</section>
+
+<!-- ============ 06 ============ -->
+<section class="section" id="s6">
+  <span class="sec-num">06</span>
+  <h2>JVM 실행 흐름</h2>
+  <div class="subtitle">컴파일이 두 번 일어난다 — javac (빌드) + JIT (실행)</div>
+
+  <div class="flow">
+    <div class="flow-step">
+      <span class="step-tag">.java</span>
+      <div class="step-desc">개발자 작성 소스코드 <small>(Worker.java)</small></div>
+    </div>
+    <div class="arrow-down">↓</div>
+    <div class="flow-step compile">
+      <span class="step-tag">javac</span>
+      <div class="step-desc"><strong>컴파일 1회차</strong> — 빌드 시 .java를 바이트코드로 변환 <small>(OS 독립적)</small></div>
+    </div>
+    <div class="arrow-down">↓</div>
+    <div class="flow-step compile">
+      <span class="step-tag">.class</span>
+      <div class="step-desc">JVM 바이트코드 — 일종의 중간 언어</div>
+    </div>
+    <div class="arrow-down">↓</div>
+    <div class="flow-step runtime">
+      <span class="step-tag">ClassLoader</span>
+      <div class="step-desc">.class를 JVM 메모리(Method Area)로 <strong>로드만</strong> 함 <small>(컴파일 X)</small></div>
+    </div>
+    <div class="arrow-down">↓</div>
+    <div class="flow-step runtime">
+      <span class="step-tag">Interpreter</span>
+      <div class="step-desc">바이트코드를 한 줄씩 해석 실행 <small>(느림 — 매번 해석)</small></div>
+    </div>
+    <div class="arrow-down">↓</div>
+    <div class="flow-step optimize">
+      <span class="step-tag">HotSpot 감지</span>
+      <div class="step-desc">"이 메서드 자주 호출되네" — 호출 카운터가 임계값(C1: ~1500, C2: ~10000) 돌파</div>
+    </div>
+    <div class="arrow-down">↓</div>
+    <div class="flow-step optimize">
+      <span class="step-tag">JIT</span>
+      <div class="step-desc"><strong>컴파일 2회차</strong> — 바이트코드를 native 머신 코드로 컴파일 + <strong>변수 레지스터 캐싱 등 최적화</strong></div>
+    </div>
+    <div class="arrow-down">↓</div>
+    <div class="flow-step optimize">
+      <span class="step-tag">native code</span>
+      <div class="step-desc">CPU에서 직접 실행 <small>(수십~수백 배 빠름. 가시성 문제의 원인)</small></div>
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <strong>면접 단골:</strong> "Java가 JVM 위에서 어떻게 실행되나?" 의 답변 흐름.
+    Java가 "한 번 컴파일하면 어디서든 실행"되는 이유는 바이트코드가 OS 독립적이고, 각 OS의 JIT가 다시 native 코드로 변환하기 때문.
+    가시성 문제는 단순히 CPU 캐시 때문이 아니라 <span class="key">JIT 최적화 + CPU 캐시 합작</span>.
+  </div>
+</section>
+
+<!-- ============ 07 ============ -->
+<section class="section" id="s7">
+  <span class="sec-num">07</span>
+  <h2>synchronized — 메모리 배리어 효과</h2>
+  <div class="subtitle">println은 출력 보호용이지만 부수 효과로 가시성 버그를 가린다</div>
+
+  <div class="code" style="margin-bottom: 24px;"><span class="comment">// java.io.PrintStream 내부 (간략화)</span>
+<span class="keyword">public void</span> println(String x) {
+    <span class="keyword">synchronized</span> (<span class="keyword">this</span>) {        <span class="comment">// ← 출력 인터리브 방지</span>
+        print(x);                  <span class="comment">// (부수 효과: 메모리 배리어)</span>
+        newLine();
+    }
+}</div>
+
+  <div class="barrier-flow">
+    <div class="barrier-row">
+      <div class="barrier-num">1</div>
+      <div class="barrier-step">
+        <div class="what">while 루프 안에서 println 호출</div>
+        <div class="why">개발자가 디버그 메시지 추가했거나, 학습 코드에 무심코 넣음</div>
+      </div>
+    </div>
+    <div class="barrier-arrow">↓</div>
+    <div class="barrier-row">
+      <div class="barrier-num">2</div>
+      <div class="barrier-step">
+        <div class="what">synchronized (System.out) 진입</div>
+        <div class="why">JMM 규약: <strong>read barrier</strong> 발동 → 자기 캐시 무효화</div>
+      </div>
+    </div>
+    <div class="barrier-arrow">↓</div>
+    <div class="barrier-row">
+      <div class="barrier-num">3</div>
+      <div class="barrier-step">
+        <div class="what">메인 메모리에서 모든 변수 재조회</div>
+        <div class="why">stopped = true 새 값을 보게 됨</div>
+      </div>
+    </div>
+    <div class="barrier-arrow">↓</div>
+    <div class="barrier-row">
+      <div class="barrier-num">4</div>
+      <div class="barrier-step">
+        <div class="what">while 조건 false → 루프 탈출</div>
+        <div class="why"><strong>가시성 문제가 자동으로 가려짐</strong> — 실제로는 풀린 게 아니라 우회된 것</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="danger-box">
+    <div class="label">동시성 디버깅의 함정</div>
+    개발자가 동시성 버그를 의심해 <span class="key-danger">println으로 디버그</span> → 버그가 사라짐 → "우연이었나" 종료 → production에서 그대로 폭발.<br>
+    <strong>버그를 잡으려고 넣은 도구가 버그를 가린다.</strong> 학습 코드 빈 루프(`while (!stopped) {}`)가 정답인 이유 — println, sleep, Logger, BlockingQueue 등 모든 동기화 자료구조가 가시성 문제를 가릴 수 있다.
+  </div>
+</section>
+
+<!-- ============ 08 ============ -->
+<section class="section" id="s8">
+  <span class="sec-num">08</span>
+  <h2>CAS (Compare And Set) 동작 흐름</h2>
+  <div class="subtitle">AtomicInteger의 정체 — 락 없이 원자성을 보장하는 lock-free 패턴</div>
+
+  <div class="balance-box">
+    <div class="balance-label">초기 balance</div>
+    <div class="balance-val">100</div>
+  </div>
+
+  <div class="cas-grid">
+    <span></span>
+    <div class="cas-time-header">
+      <span>t=1</span><span>t=2</span><span>t=3</span><span>t=4</span><span>t=5</span><span>t=6</span><span>t=7</span>
+    </div>
+  </div>
+
+  <div class="cas-grid">
+    <span class="lane-label">T1</span>
+    <span class="cas-step read">read 100</span>
+    <span class="cas-step check">check OK</span>
+    <span class="cas-step success">CAS 100→99 ✓</span>
+    <span class="cas-step idle">—</span>
+    <span class="cas-step idle">—</span>
+    <span class="cas-step idle">—</span>
+    <span class="cas-step idle">—</span>
+  </div>
+  <div class="cas-grid">
+    <span class="lane-label">T2</span>
+    <span class="cas-step read">read 100</span>
+    <span class="cas-step check">check OK</span>
+    <span class="cas-step fail">CAS 100→99 ✗</span>
+    <span class="cas-step retry">retry</span>
+    <span class="cas-step read">read 99</span>
+    <span class="cas-step check">check OK</span>
+    <span class="cas-step success">CAS 99→98 ✓</span>
+  </div>
+
+  <div class="cas-legend">
+    <div class="cas-legend-item"><div class="cas-legend-dot" style="background:#fef3c7;border-color:#fcd34d;"></div>read (값 읽기)</div>
+    <div class="cas-legend-item"><div class="cas-legend-dot" style="background:#dbeafe;border-color:#93c5fd;"></div>check (잔고 충분?)</div>
+    <div class="cas-legend-item"><div class="cas-legend-dot" style="background:#d1fae5;border-color:#6ee7b7;"></div>CAS 성공</div>
+    <div class="cas-legend-item"><div class="cas-legend-dot" style="background:#fecaca;border-color:#f87171;"></div>CAS 실패 (다른 스레드가 먼저)</div>
+    <div class="cas-legend-item"><div class="cas-legend-dot" style="background:#fed7aa;border-color:#fdba74;"></div>retry (재시도)</div>
+  </div>
+
+  <div class="code" style="margin-top: 24px;"><span class="comment">// AtomicInteger.compareAndSet 흐름</span>
+<span class="keyword">while</span> (<span class="success">true</span>) {
+    <span class="keyword">int</span> current = balance.<span class="keyword">get</span>();         <span class="comment">// (1) 현재값 읽기</span>
+    <span class="keyword">if</span> (current &lt; amount) <span class="keyword">return false</span>;     <span class="comment">// (2) 잔고 부족 체크</span>
+    <span class="keyword">if</span> (balance.<span class="keyword">compareAndSet</span>(current, current - amount)) {
+        <span class="keyword">return true</span>;                          <span class="comment">// (3a) 성공</span>
+    }
+    <span class="comment">// (3b) 실패: 다른 스레드가 그 사이에 바꿈 → (1)부터 재시도</span>
+}</div>
+
+  <div class="insight-box">
+    <strong>CAS의 본질:</strong> "지금 값이 current면 new로 바꿔줘" 를 <span class="key">CPU 단일 명령어</span>로 처리.
+    <ul style="margin: 8px 0 0; padding-left: 20px;">
+      <li><strong>x86 / x64</strong>: <code>CMPXCHG</code></li>
+      <li><strong>ARM (Apple Silicon)</strong>: <code>LDREX</code> / <code>STREX</code></li>
+    </ul>
+    어느 단계에서도 락은 없음 — <strong>lock-free</strong>. 충돌 시 재시도 패턴이라 <strong>임계 영역이 짧을수록 효율적</strong>.
+  </div>
+</section>
+
+<!-- ============ 09 ============ -->
+<section class="section" id="s9">
+  <span class="sec-num">09</span>
+  <h2>synchronized vs CAS — 두 가지 접근 비교</h2>
+  <div class="subtitle">비관적 락 vs 낙관적 lock-free — 같은 문제를 푸는 정반대 철학</div>
+
+  <div class="compare">
+    <div class="vs-card sync">
+      <div class="vs-card-tag">비관적</div>
+      <div class="vs-card-title">synchronized — 락 + 줄 서기</div>
+
+      <div class="vs-flow">
+        <ol>
+          <li>락 시도 → 획득 (다른 스레드 대기)</li>
+          <li>임계 영역 실행 (read + write)</li>
+          <li>락 해제 → 다음 스레드 차례</li>
+        </ol>
+      </div>
+
+      <div class="vs-analogy">
+        🚪 <strong>화장실 비유</strong>: 들어가서 문 잠금. 199명은 줄 서서 대기. 한 명 끝나야 다음 한 명.
+      </div>
+    </div>
+
+    <div class="vs-card cas">
+      <div class="vs-card-tag">낙관적</div>
+      <div class="vs-card-title">AtomicInteger / CAS — 락 없이 시도</div>
+
+      <div class="vs-flow">
+        <ol>
+          <li>현재값 읽기 (락 X)</li>
+          <li>compareAndSet 시도 (원자적)</li>
+          <li>성공 → 끝 / 실패 → 재시도</li>
+        </ol>
+      </div>
+
+      <div class="vs-analogy">
+        🚪 <strong>화장실 비유</strong>: 일단 들어감. 나오기 직전 "옆에 누가 같이 있나?" 확인. 있으면 다시 시도. <strong>줄 안 섬.</strong>
+      </div>
+    </div>
+  </div>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th class="col-label">측면</th>
+        <th>synchronized</th>
+        <th>AtomicInteger (CAS)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-label">락 사용</td>
+        <td class="sync-cell">✅ 잡음</td>
+        <td class="cas-cell">❌ 안 잡음 (lock-free)</td>
+      </tr>
+      <tr>
+        <td class="col-label">충돌 시 동작</td>
+        <td class="sync-cell">줄 서서 대기</td>
+        <td class="cas-cell">재시도 (busy retry)</td>
+      </tr>
+      <tr>
+        <td class="col-label">컨텍스트 스위칭</td>
+        <td class="sync-cell">자주 발생</td>
+        <td class="cas-cell">거의 없음</td>
+      </tr>
+      <tr>
+        <td class="col-label">적합한 상황</td>
+        <td class="sync-cell">긴 임계 영역, 복잡한 로직</td>
+        <td class="cas-cell">단순 카운터/플래그, 짧은 연산</td>
+      </tr>
+      <tr>
+        <td class="col-label">불리한 상황</td>
+        <td class="sync-cell">짧은 작업 (오버헤드 비중 ↑)</td>
+        <td class="cas-cell">충돌 매우 잦음 (재시도 폭증)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="insight-box">
+    <strong>현대 JVM (Java 21)에서:</strong> biased locking, lightweight locking, adaptive spinning 등 최적화 덕에
+    <span class="key">단순 임계 영역에서는 두 도구의 차이가 11% 안팎</span> — 1990년대 자료의 "synchronized 30배 느림"은 옛날 이야기.
+    실용적 선택 기준은 성능보다 <strong>가독성과 의도 표현</strong>인 경우가 많음.
+  </div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section class="section" id="s10">
+  <span class="sec-num">10</span>
+  <h2>race vs visibility — 1주차 두 큰 줄기</h2>
+  <div class="subtitle">이름은 비슷하지만 메커니즘이 완전히 다른 두 동시성 문제</div>
+
+  <div class="compare">
+    <div class="vs-card sync" style="border-left-color: var(--danger);">
+      <div class="vs-card-tag" style="background: #fef2f2; color: var(--danger);">결과가 깨짐</div>
+      <div class="vs-card-title" style="color: var(--danger);">race condition (atomicity 위반)</div>
+
+      <div class="vs-flow">
+        <ol>
+          <li>한 변수에 read-modify-write</li>
+          <li>두 스레드가 거의 동시에 read</li>
+          <li>같은 값으로 write → 덮어쓰기</li>
+          <li>결과: 누락 / 초과 / 음수</li>
+        </ol>
+      </div>
+
+      <div class="vs-analogy" style="background: #fef2f2; border-left-color: var(--danger); color: #991b1b;">
+        💥 <strong>예</strong>: 100원짜리 통장에서 200스레드가 동시 출금 → 잔고가 -5원으로 떨어짐
+      </div>
+    </div>
+
+    <div class="vs-card cas" style="border-left-color: var(--accent);">
+      <div class="vs-card-tag" style="background: #ecfeff; color: var(--accent);">통신이 끊김</div>
+      <div class="vs-card-title" style="color: var(--accent);">visibility 위반</div>
+
+      <div class="vs-flow">
+        <ol>
+          <li>한 스레드가 변수 변경</li>
+          <li>변경이 자기 CPU 캐시에만 반영</li>
+          <li>다른 스레드는 옛날 캐시 값을 봄</li>
+          <li>결과: 신호 못 받음 / 무한 루프</li>
+        </ol>
+      </div>
+
+      <div class="vs-analogy" style="background: #ecfeff; border-left-color: var(--accent); color: #155e75;">
+        💥 <strong>예</strong>: 메인이 stopped=true 했는데 Worker는 5초 후에도 false로 보고 무한 루프
+      </div>
+    </div>
+  </div>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th class="col-label">측면</th>
+        <th>race condition</th>
+        <th>visibility</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-label">무엇이 깨지나</td>
+        <td class="race-cell">결과 (값 자체)</td>
+        <td class="vis-cell">통신 (변경 전달)</td>
+      </tr>
+      <tr>
+        <td class="col-label">발생 위치</td>
+        <td class="race-cell">한 변수의 read-modify-write 사이</td>
+        <td class="vis-cell">한 스레드의 변경이 다른 스레드에</td>
+      </tr>
+      <tr>
+        <td class="col-label">근본 원인</td>
+        <td class="race-cell">동시 접근으로 인한 인터리빙</td>
+        <td class="vis-cell">CPU 캐시 격리 + JIT 최적화</td>
+      </tr>
+      <tr>
+        <td class="col-label">시연 도구</td>
+        <td class="race-cell">ExecutorService + CountDownLatch</td>
+        <td class="vis-cell">빈 루프 Worker 스레드</td>
+      </tr>
+      <tr>
+        <td class="col-label">해결 도구</td>
+        <td class="race-cell">synchronized, AtomicInteger</td>
+        <td class="vis-cell">volatile, synchronized</td>
+      </tr>
+      <tr>
+        <td class="col-label">1주차 STAGE</td>
+        <td class="race-cell">STAGE 1, STAGE 3</td>
+        <td class="vis-cell">STAGE 2</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="insight-box">
+    <strong>둘은 별개 문제:</strong>
+    <ul style="margin: 8px 0 0; padding-left: 20px;">
+      <li><code>synchronized</code> — 락(원자성) + 메모리 배리어(가시성) → <strong>둘 다 풀어줌</strong></li>
+      <li><code>AtomicInteger</code> — CAS(원자성) + 내부적으로 volatile(가시성) → <strong>둘 다 풀어줌 (단순 연산만)</strong></li>
+      <li><code>volatile</code> — 메모리 배리어만 → <strong>가시성만 풀어줌</strong> (count++ 같은 read-modify-write 못 풀어줌)</li>
+    </ul>
+    그래서 카운터에는 <code>volatile</code> 만 붙이면 부족하고, 깃발(boolean stopped)에는 <code>volatile</code> 로 충분.
+  </div>
+</section>
+
+</div>
+
+</body>
+</html>
